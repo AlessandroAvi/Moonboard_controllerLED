@@ -1,5 +1,4 @@
 "Core/Src/LED.o"
-"Core/Src/cJSON.o"
 "Core/Src/debug.o"
 "Core/Src/gpio.o"
 "Core/Src/keypad.o"

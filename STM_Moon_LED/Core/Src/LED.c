@@ -1,7 +1,6 @@
 #include "LED.h"
 #include "gpio.h"
 #include "tim.h"
-#include "cJSON.h"
 
 #define LED_NUM 120
 
