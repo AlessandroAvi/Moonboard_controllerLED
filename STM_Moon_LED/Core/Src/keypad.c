@@ -163,3 +163,202 @@ uint32_t keypad_getNumber(){
 
 	return number;
 }
+
+
+
+
+
+
+
+
+
+// ########################################################################
+// 								VERSION 2
+// ########################################################################
+
+// ### Keypad layout
+// 1  2  3  A
+// 4  5  6  B
+// 7  8  9  C
+// *  0  #  D
+
+// A (10)= ENTER (number input is finished)
+// B (20)=
+// C (30)=
+// * (40)=
+// # (50)=
+// D (60)= DELETE (delete the last digit)
+
+// In this case the GPIO pins that should be connected to the keyboard are:
+
+// A8  -> row1
+// B10 -> row2
+// B4  -> row3
+// B5  -> row4
+// B3  -> col1
+// A10 -> col2
+// A2  -> col3
+// A3  -> col4
+
+// ********************************************************
+
+
+
+
+uint8_t read_GPIO(){
+
+	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3)) return 1;
+	if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10)) return 2;
+	if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2)) return 3;
+	if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3)) return 4;
+
+	return 0;
+}
+
+uint8_t write_GPIO(uint8_t riga){
+
+	GPIO_PinState state_row1 = GPIO_PIN_RESET;
+	GPIO_PinState state_row2 = GPIO_PIN_RESET;
+	GPIO_PinState state_row3 = GPIO_PIN_RESET;
+	GPIO_PinState state_row4 = GPIO_PIN_RESET;
+
+	if(riga==1){
+		state_row1 = GPIO_PIN_SET;
+	}else if(riga==2){
+		state_row2 = GPIO_PIN_SET;
+	}else if(riga==3){
+		state_row3 = GPIO_PIN_SET;
+	}else if(riga==4){
+		state_row4 = GPIO_PIN_SET;
+	}
+
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, state_row1);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, state_row2);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, state_row3);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, state_row4);
+}
+
+
+uint8_t decode_key_v2(uint8_t row, uint8_t col){
+	uint8_t key;
+
+	switch(row){
+		case(1):
+			if (col==1) key=1;
+			if (col==2) key=4;
+			if (col==3) key=7;
+			if (col==4) key=40;
+			break;
+		case(2):
+			if (col==1) key=2;
+			if (col==2) key=5;
+			if (col==3) key=8;
+			if (col==4) key=0;
+			break;
+		case(3):
+			if (col==1) key=3;
+			if (col==2) key=6;
+			if (col==3) key=9;
+			if (col==4) key=60;
+			break;
+		case(4):
+			if (col==1) key=10;
+			if (col==2) key=20;
+			if (col==3) key=30;
+			if (col==4) key=40;
+			break;
+		default:
+			key=0;
+			break;
+	}
+
+	return key;
+}
+
+
+// Perform a polling on each row in order to detect the selection of a key
+uint8_t read_key_v2(){
+
+	uint8_t key = 0;
+	uint8_t col_read = 0;
+
+	// stay in polling and wait for a button to be pressed
+	while(true){
+
+		// *** FIRST row
+		write_GPIO(1);						// write 4 status of row GPIO (enable GPIO of row1)
+		col_read = read_GPIO();				// read 4 status of col GPIO
+		if(col_read != 0) key = decode_key_v2(1, col_read);		// decode which button has been pressed
+		if(key!=0) return key;
+
+		// *** SECOND row
+		write_GPIO(2);
+		col_read = read_GPIO();
+		if(col_read != 0) key = decode_key_v2(2, col_read);
+		if(key!=0) return key;
+
+		// *** THIRD row
+		write_GPIO(3);
+		col_read = read_GPIO();
+		if(col_read != 0) key = decode_key_v2(3, col_read);
+		if(key!=0) return key;
+
+		// *** FORTH row
+		write_GPIO(4);
+		col_read = read_GPIO();
+		if(col_read != 0) key = decode_key_v2(4, col_read);
+		if(key!=0) return key;
+	}
+
+	return 0;
+}
+
+
+uint32_t keypad_getNumber_v2(){
+
+	uint8_t arr[10];
+	uint32_t number=0;
+	uint8_t key;
+	uint8_t i=0;
+
+	char msg[100];
+	int msg_len;
+
+	PRINTF("\n\r The digits selected are: ");
+
+	// until I press the ENTER button do:
+	while(true){
+
+		key = read_key_v2();		// returns the digit input
+
+		if(key==10){			// A, exit insertion number
+			break;
+		}else if(key==20){		// B, nothing
+
+		}else if(key==30){		// C, nothing
+
+		}else if(key==40){		// *, nothing
+
+		}else if(key==50){		// #, nothing
+
+		}else if(key==60){		// D, delete last digit
+			i=-1;
+			arr[i]=0;
+			PRINTF("DEL ");
+		}else{					// number keys
+			arr[i]=key;
+			PRINTF8("%d ", arr[i]);
+			i+=1;
+		}
+
+		HAL_Delay(200);		// To avoid long press error
+	}
+
+	// Transform the array in number
+	for(int j=i; j>0; j--){
+		number += pow(10, j-1)*arr[i-j];
+	}
+	PRINTF32("\n\r Final number obtained is: %d", number);
+
+	return number;
+}

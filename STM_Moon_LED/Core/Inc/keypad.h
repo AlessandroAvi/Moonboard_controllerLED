@@ -16,3 +16,15 @@ uint8_t decode_key(uint8_t line, uint8_t col);
 uint8_t read_key();
 
 uint32_t keypad_getNumber();
+
+
+uint8_t write_GPIO(uint8_t riga);
+
+uint8_t read_GPIO();
+
+uint8_t decode_key_v2(uint8_t line, uint8_t col);
+
+uint8_t read_key_v2();
+
+uint32_t keypad_getNumber_v2();
+

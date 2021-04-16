@@ -102,7 +102,7 @@ int main(void)
   {
 
 	  if(BLUE_BUTTON){
-		  keypad_getNumber();
+		  keypad_getNumber_v2();
 		  BLUE_BUTTON = false;
 	  }
     /* USER CODE END WHILE */
