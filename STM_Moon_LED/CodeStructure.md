@@ -22,3 +22,61 @@
 - script that adds a number to the JSON problem file
 - script for the LED itnerfacing
 - script for the display
+
+
+
+## LED
+
+![image-20210416214503904](C:\Users\massi\AppData\Roaming\Typora\typora-user-images\image-20210416214503904.png)
+
+
+
+
+
+
+
+while(problem[i] != ":"){
+
+​    i+=1;
+
+  }
+
+  i+=1;
+
+  while(i <= sizeof(problem)){
+
+
+
+​    tmp = problem[i];
+
+
+
+​    if(isalpha(tmp)){
+
+​      prob_col[pos] = tmp;
+
+​    }else if(isdigit(tmp)){
+
+​      prob_row[pos] = tmp;
+
+​      pos+=1;
+
+​    }
+
+
+
+
+
+​    i+=1;
+
+  }
+
+
+
+  for(int k=0; k<sizeof(problem); k++){
+
+​    printf("%c", prob_col[k]);
+
+​    printf("%d ", prob_row[k]);
+
+  }

@@ -28,6 +28,7 @@
 #include "stdbool.h"
 #include "keypad.h"
 #include "LED.h"
+#include "problems.h"
 
 /* USER CODE END Includes */
 
@@ -94,6 +95,9 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
+  struct ProblemInfo problem;
+  uint32_t problemID = 0;
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -102,9 +106,15 @@ int main(void)
   {
 
 	  if(BLUE_BUTTON){
-		  keypad_getNumber_v2();
+		  problemID = keypad_getNumber_v2();
+		  problem_genArray(problemID, &problem);
+
 		  BLUE_BUTTON = false;
 	  }
+
+
+
+	  LED_light();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
