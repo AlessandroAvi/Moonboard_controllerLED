@@ -16,5 +16,4 @@ struct ProblemInfo{
 
 
 
-void problem_search(ProblemInfo *p, uint32_t id);
 

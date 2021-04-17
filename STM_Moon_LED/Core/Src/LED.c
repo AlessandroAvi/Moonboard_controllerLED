@@ -63,8 +63,10 @@ uint8_t LED_findPos(char letter, uint8_t number){
 	return position;
 }
 
+/*
+void problem_genArray(uint32_t id){
 
-void problem_genArray(uint32_t id, ProblemInfo *problem){
+
 
 	uint16_t movesNum = 0;
 	uint16_t LedPos = 0;
@@ -102,12 +104,13 @@ void problem_genArray(uint32_t id, ProblemInfo *problem){
 	}
 
 }
+*/
 
 
 void LED_setAllBlack(uint8_t *LEDbuffer){
 
 	for(int i=0; i<ROW_NUM*COL_NUM*3; i++){
-		prob_arr[i]=0;
+		//prob_arr[i]=0;
 	}
 
 }
@@ -116,7 +119,7 @@ void LED_setAllBlack(uint8_t *LEDbuffer){
 void LED_setAllWhite(uint8_t *LEDbuffer){
 
 	for(int i=0; i<ROW_NUM*COL_NUM*3; i++){
-		prob_arr[i]=255;
+		//prob_arr[i]=255;
 	}
 
 
@@ -136,14 +139,7 @@ void LED_light(){
 
 	for(int k=0; k<ROW_NUM*COL_NUM*3; k++){
 
-		PWM_signal(prob_arr[k] & bit0);
-		PWM_signal(prob_arr[k] & bit1);
-		PWM_signal(prob_arr[k] & bit2);
-		PWM_signal(prob_arr[k] & bit3);
-		PWM_signal(prob_arr[k] & bit4);
-		PWM_signal(prob_arr[k] & bit5);
-		PWM_signal(prob_arr[k] & bit6);
-		PWM_signal(prob_arr[k] & bit7);
+
 
 
 	}

@@ -107,7 +107,7 @@ int main(void)
 
 	  if(BLUE_BUTTON){
 		  problemID = keypad_getNumber_v2();
-		  problem_genArray(problemID, &problem);
+		  //problem_genArray(problemID, &problem);
 
 		  BLUE_BUTTON = false;
 	  }

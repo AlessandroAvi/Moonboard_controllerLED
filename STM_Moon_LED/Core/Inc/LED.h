@@ -20,7 +20,7 @@ uint8_t LED_findPos(char letter, uint8_t number);
 
 // eats the ID of the problem and generates an array with
 // colors encoded in correct places
-void problem_genArray(uint32_t id, ProblemInfo *problem);
+void problem_genArray(uint32_t id);
 
 
 void LED_setAllBlack(uint8_t *LEDbuffer);

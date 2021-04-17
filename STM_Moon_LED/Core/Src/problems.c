@@ -7,19 +7,6 @@
 
 
 
-void problem_search(ProblemInfo *p, uint32_t id){
 
-
-	switch(id){
-		case 1:
-
-			break;
-		case 2:
-
-			break;
-	}
-
-
-}
 
 
