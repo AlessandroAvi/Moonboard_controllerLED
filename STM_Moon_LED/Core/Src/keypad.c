@@ -191,14 +191,16 @@ uint32_t keypad_getNumber(){
 
 // In this case the GPIO pins that should be connected to the keyboard are:
 
-// A8  -> row1
-// B10 -> row2
-// B4  -> row3
-// B5  -> row4
-// B3  -> col1
-// A10 -> col2
-// A2  -> col3
-// A3  -> col4
+// B6  -> row1
+// C7  -> row2
+// A8  -> row3
+// B10 -> row4
+
+// B4  -> col1
+// B5  -> col2
+// B3  -> col3
+// A10 -> col4
+
 
 // ********************************************************
 
@@ -207,10 +209,10 @@ uint32_t keypad_getNumber(){
 
 uint8_t read_GPIO(){
 
-	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3)) return 1;
-	if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10)) return 2;
-	if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2)) return 3;
-	if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3)) return 4;
+	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4)) return 1;
+	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5)) return 2;
+	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3)) return 3;
+	if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10)) return 4;
 
 	return 0;
 }
@@ -232,10 +234,10 @@ uint8_t write_GPIO(uint8_t riga){
 		state_row4 = GPIO_PIN_SET;
 	}
 
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, state_row1);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, state_row2);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, state_row3);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, state_row4);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, state_row1);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, state_row2);
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, state_row3);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, state_row4);
 }
 
 
