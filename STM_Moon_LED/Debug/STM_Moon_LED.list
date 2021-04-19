@@ -27,23 +27,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  00020074  2**0
                   CONTENTS, READONLY
- 12 .debug_info   0000ead5  00000000  00000000  000200a4  2**0
+ 12 .debug_info   0000eaa9  00000000  00000000  000200a4  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_abbrev 00002517  00000000  00000000  0002eb79  2**0
+ 13 .debug_abbrev 000024ff  00000000  00000000  0002eb4d  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_aranges 00000d28  00000000  00000000  00031090  2**3
+ 14 .debug_aranges 00000d20  00000000  00000000  00031050  2**3
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_ranges 00000be0  00000000  00000000  00031db8  2**3
+ 15 .debug_ranges 00000bd8  00000000  00000000  00031d70  2**3
                   CONTENTS, READONLY, DEBUGGING
- 16 .debug_macro  00017676  00000000  00000000  00032998  2**0
+ 16 .debug_macro  0001766e  00000000  00000000  00032948  2**0
                   CONTENTS, READONLY, DEBUGGING
- 17 .debug_line   0000bfe3  00000000  00000000  0004a00e  2**0
+ 17 .debug_line   0000bfab  00000000  00000000  00049fb6  2**0
                   CONTENTS, READONLY, DEBUGGING
- 18 .debug_str    0008d888  00000000  00000000  00055ff1  2**0
+ 18 .debug_str    0008d886  00000000  00000000  00055f61  2**0
                   CONTENTS, READONLY, DEBUGGING
- 19 .comment      0000007b  00000000  00000000  000e3879  2**0
+ 19 .comment      0000007b  00000000  00000000  000e37e7  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00003c2c  00000000  00000000  000e38f4  2**2
+ 20 .debug_frame  00003c04  00000000  00000000  000e3864  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -1196,7 +1196,7 @@ Disassembly of section .text:
 
 08000e98 <LED_findPos>:
 // *******************************************************************
-// 					MANIPULATION OF THE LED ARRAY
+// 					MANIPULATION OF THE LED MATRIX
 // *******************************************************************
 
 
@@ -1364,8 +1364,8 @@ void problem_genArray(ProblemInfo *problem, uint32_t id){
 	}
 
 	// put to 0 all the colors for each LED
-	LED_setAllWhite();
- 8000f90:	f000 f86c 	bl	800106c <LED_setAllWhite>
+	LED_setAllBlack();
+ 8000f90:	f000 f86c 	bl	800106c <LED_setAllBlack>
 
 	// for each move define the color of the corresponding LED
 	for(int i=0; i<movesNum; i++){
@@ -1499,13 +1499,11 @@ void problem_genArray(ProblemInfo *problem, uint32_t id){
  8001066:	bf00      	nop
  8001068:	200000a0 	.word	0x200000a0
 
-0800106c <LED_setAllWhite>:
-	}
-
-}
+0800106c <LED_setAllBlack>:
 
 
-void LED_setAllWhite(uint8_t *LEDbuffer){
+
+void LED_setAllBlack(uint8_t *LEDbuffer){
  800106c:	b480      	push	{r7}
  800106e:	b085      	sub	sp, #20
  8001070:	af00      	add	r7, sp, #0
@@ -1514,27 +1512,27 @@ void LED_setAllWhite(uint8_t *LEDbuffer){
 	for(int i=0; i<ROW_NUM*COL_NUM; i++){
  8001074:	2300      	movs	r3, #0
  8001076:	60fb      	str	r3, [r7, #12]
- 8001078:	e014      	b.n	80010a4 <LED_setAllWhite+0x38>
-		LED_Data[i][1]=255;
- 800107a:	4a0f      	ldr	r2, [pc, #60]	; (80010b8 <LED_setAllWhite+0x4c>)
+ 8001078:	e014      	b.n	80010a4 <LED_setAllBlack+0x38>
+		LED_Data[i][1]=0;
+ 800107a:	4a0f      	ldr	r2, [pc, #60]	; (80010b8 <LED_setAllBlack+0x4c>)
  800107c:	68fb      	ldr	r3, [r7, #12]
  800107e:	009b      	lsls	r3, r3, #2
  8001080:	4413      	add	r3, r2
- 8001082:	22ff      	movs	r2, #255	; 0xff
+ 8001082:	2200      	movs	r2, #0
  8001084:	705a      	strb	r2, [r3, #1]
-		LED_Data[i][2]=255;
- 8001086:	4a0c      	ldr	r2, [pc, #48]	; (80010b8 <LED_setAllWhite+0x4c>)
+		LED_Data[i][2]=0;
+ 8001086:	4a0c      	ldr	r2, [pc, #48]	; (80010b8 <LED_setAllBlack+0x4c>)
  8001088:	68fb      	ldr	r3, [r7, #12]
  800108a:	009b      	lsls	r3, r3, #2
  800108c:	4413      	add	r3, r2
- 800108e:	22ff      	movs	r2, #255	; 0xff
+ 800108e:	2200      	movs	r2, #0
  8001090:	709a      	strb	r2, [r3, #2]
-		LED_Data[i][3]=255;
- 8001092:	4a09      	ldr	r2, [pc, #36]	; (80010b8 <LED_setAllWhite+0x4c>)
+		LED_Data[i][3]=0;
+ 8001092:	4a09      	ldr	r2, [pc, #36]	; (80010b8 <LED_setAllBlack+0x4c>)
  8001094:	68fb      	ldr	r3, [r7, #12]
  8001096:	009b      	lsls	r3, r3, #2
  8001098:	4413      	add	r3, r2
- 800109a:	22ff      	movs	r2, #255	; 0xff
+ 800109a:	2200      	movs	r2, #0
  800109c:	70da      	strb	r2, [r3, #3]
 	for(int i=0; i<ROW_NUM*COL_NUM; i++){
  800109e:	68fb      	ldr	r3, [r7, #12]
@@ -1542,9 +1540,8 @@ void LED_setAllWhite(uint8_t *LEDbuffer){
  80010a2:	60fb      	str	r3, [r7, #12]
  80010a4:	68fb      	ldr	r3, [r7, #12]
  80010a6:	2bc5      	cmp	r3, #197	; 0xc5
- 80010a8:	dde7      	ble.n	800107a <LED_setAllWhite+0xe>
+ 80010a8:	dde7      	ble.n	800107a <LED_setAllBlack+0xe>
 	}
-
 
 }
  80010aa:	bf00      	nop
@@ -1993,8 +1990,8 @@ uint8_t read_GPIO(){
  800137e:	2304      	movs	r3, #4
  8001380:	e000      	b.n	8001384 <read_GPIO+0x50>
 
-	return 22; // 22 is the no key number
- 8001382:	2316      	movs	r3, #22
+	return NULL; // 22 is the no key number
+ 8001382:	2300      	movs	r3, #0
 }
  8001384:	4618      	mov	r0, r3
  8001386:	bd80      	pop	{r7, pc}
@@ -2625,6 +2622,8 @@ int main(void)
  800177a:	4611      	mov	r1, r2
  800177c:	4618      	mov	r0, r3
  800177e:	f7ff fbef 	bl	8000f60 <problem_genArray>
+
+
 
 		  BLUE_BUTTON = false;
  8001782:	4b02      	ldr	r3, [pc, #8]	; (800178c <main+0x4c>)

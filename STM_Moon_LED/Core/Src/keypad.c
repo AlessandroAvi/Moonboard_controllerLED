@@ -214,7 +214,7 @@ uint8_t read_GPIO(){
 	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3)) return 3;
 	if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10)) return 4;
 
-	return 22; // 22 is the no key number
+	return NULL;
 }
 
 void write_GPIO(uint8_t riga){
@@ -270,7 +270,7 @@ uint8_t decode_key_v2(uint8_t row, uint8_t col){
 			if (col==4) key=60;
 			break;
 		default:
-			key=22;
+			key=NULL;
 			break;
 	}
 
@@ -281,8 +281,8 @@ uint8_t decode_key_v2(uint8_t row, uint8_t col){
 // Perform a polling on each row in order to detect the selection of a key
 uint8_t read_key_v2(){
 
-	uint8_t key = 22;     		// 22 is the no key number
-	uint8_t col_read = 0;
+	uint8_t key = NULL;     		// 22 is the no key number
+	uint8_t col_read = NULL;
 
 	// stay in polling and wait for a button to be pressed
 	while(true){
@@ -290,35 +290,35 @@ uint8_t read_key_v2(){
 		// *** FIRST row
 		write_GPIO(1);						// write 4 status of row GPIO (enable GPIO of row1)
 		col_read = read_GPIO();				// read 4 status of col GPIO
-		if(col_read != 0) key = decode_key_v2(1, col_read);		// decode which button has been pressed
-		if(key!=0) return key;
+		if(col_read != NULL) key = decode_key_v2(1, col_read);		// decode which button has been pressed
+		if(key!=NULL) return key;
 
 		// *** SECOND row
 		write_GPIO(2);
 		col_read = read_GPIO();
-		if(col_read != 0) key = decode_key_v2(2, col_read);
-		if(key!=0) return key;
+		if(col_read != NULL) key = decode_key_v2(2, col_read);
+		if(key!=NULL) return key;
 
 		// *** THIRD row
 		write_GPIO(3);
 		col_read = read_GPIO();
-		if(col_read != 0) key = decode_key_v2(3, col_read);
-		if(key!=0) return key;
+		if(col_read != NULL) key = decode_key_v2(3, col_read);
+		if(key!=NULL) return key;
 
 		// *** FORTH row
 		write_GPIO(4);
 		col_read = read_GPIO();
-		if(col_read != 0) key = decode_key_v2(4, col_read);
-		if(key!=0) return key;
+		if(col_read != NULL) key = decode_key_v2(4, col_read);
+		if(key!=NULL) return key;
 	}
 
-	return 0;
+	return NULL;
 }
 
 
 uint32_t keypad_getNumber_v2(){
 
-	uint8_t arr[10];
+	uint8_t inputDigit[10];
 	uint32_t number=0;
 	uint8_t key;
 	uint8_t i=0;
@@ -333,36 +333,39 @@ uint32_t keypad_getNumber_v2(){
 
 		key = read_key_v2();		// returns the digit input
 
-		if(key==10){			// A, exit insertion number
+		if(kei==NULL){
+			PRINTF("\n\r     Something went wrong");
+		}else if(key==10){			// A, exit insertion number
+			PRINTF("\n\r     End of input mode");
 			break;
 		}else if(key==20){		// B, nothing
-
+			PRINTF("B ");
 		}else if(key==30){		// C, nothing
-
+			PRINTF("C ");
 		}else if(key==40){		// *, nothing
-
+			PRINTF("* ");
 		}else if(key==50){		// #, nothing
-
+			PRINTF("# ");
 		}else if(key==60){		// D, delete last digit
 			i=-1;
-			arr[i]=0;
+			inputDigit[i] = 0;
 			PRINTF("DEL ");
-		}else{					// number keys
-			arr[i]=key;
-			PRINTF8("%d ", arr[i]);
+		}else if(key>=0 && key<=9){	// number keys
+			inputDigit[i] = key;
+			PRINTF8("%d ", inputDigit[i]);
 			i+=1;
 		}
 
-		key=22;
+		key=NULL;
 
 		HAL_Delay(200);		// To avoid long press error
 	}
 
 	// Transform the array in number
 	for(int j=i; j>0; j--){
-		number += pow(10, j-1)*arr[i-j];
+		number += pow(10, j-1)*inputDigit[i-j];
 	}
-	PRINTF32("\n\r Final number obtained is: %d", number);
+	PRINTF32("\n\r     Final number obtained is: %d", number);
 
 	return number;
 }

@@ -1,6 +1,5 @@
 // This file contains the functions declarations for the library that controls the keypad
 #include "main.h"
-#include "problems.h"
 #include <stdbool.h>
 
 #define MAX_LED 198
