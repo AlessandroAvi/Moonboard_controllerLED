@@ -214,7 +214,7 @@ uint8_t read_GPIO(){
 	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3)) return 3;
 	if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10)) return 4;
 
-	return 0;
+	return 22; // 22 is the no key number
 }
 
 uint8_t write_GPIO(uint8_t riga){
@@ -247,30 +247,30 @@ uint8_t decode_key_v2(uint8_t row, uint8_t col){
 	switch(row){
 		case(1):
 			if (col==1) key=1;
-			if (col==2) key=4;
-			if (col==3) key=7;
-			if (col==4) key=40;
+			if (col==2) key=2;
+			if (col==3) key=3;
+			if (col==4) key=10;
 			break;
 		case(2):
-			if (col==1) key=2;
+			if (col==1) key=4;
 			if (col==2) key=5;
-			if (col==3) key=8;
-			if (col==4) key=0;
+			if (col==3) key=6;
+			if (col==4) key=20;
 			break;
 		case(3):
-			if (col==1) key=3;
-			if (col==2) key=6;
+			if (col==1) key=7;
+			if (col==2) key=8;
 			if (col==3) key=9;
-			if (col==4) key=60;
+			if (col==4) key=30;
 			break;
 		case(4):
-			if (col==1) key=10;
-			if (col==2) key=20;
-			if (col==3) key=30;
-			if (col==4) key=40;
+			if (col==1) key=40;
+			if (col==2) key=0;
+			if (col==3) key=50;
+			if (col==4) key=60;
 			break;
 		default:
-			key=0;
+			key=22;
 			break;
 	}
 
@@ -281,7 +281,7 @@ uint8_t decode_key_v2(uint8_t row, uint8_t col){
 // Perform a polling on each row in order to detect the selection of a key
 uint8_t read_key_v2(){
 
-	uint8_t key = 0;
+	uint8_t key = 22;     		// 22 is the no key number
 	uint8_t col_read = 0;
 
 	// stay in polling and wait for a button to be pressed
