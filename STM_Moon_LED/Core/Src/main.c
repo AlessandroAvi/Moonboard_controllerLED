@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -28,7 +29,7 @@
 #include "stdbool.h"
 #include "keypad.h"
 #include "LED.h"
-#include "problems.h"
+
 
 /* USER CODE END Includes */
 
@@ -61,6 +62,23 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+// *******************************************************************
+// 					TUTORIAL CODE
+// *******************************************************************
+
+
+
+
+
+
+// When DMA finishes a send triggers a flag and stops the data transfer
+void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim){
+	HAL_TIM_PWM_Stop_DMA(&htim2, TIM_CHANNEL_1);
+	datasentflag = 1;
+}
+
+
+
 /* USER CODE END 0 */
 
 /**
@@ -91,6 +109,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART2_UART_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
@@ -107,14 +126,15 @@ int main(void)
 
 	  if(BLUE_BUTTON){
 		  problemID = keypad_getNumber_v2();
-		  //problem_genArray(problemID, &problem);
+		  problem_genArray(problemID, &problem);
+
+
 
 		  BLUE_BUTTON = false;
 	  }
 
 
 
-	  LED_light();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -144,7 +164,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 80;
+  RCC_OscInitStruct.PLL.PLLN = 72;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 7;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)

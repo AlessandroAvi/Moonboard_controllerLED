@@ -18,7 +18,7 @@ uint8_t read_key();
 uint32_t keypad_getNumber();
 
 
-uint8_t write_GPIO(uint8_t riga);
+void write_GPIO(uint8_t riga);
 
 uint8_t read_GPIO();
 

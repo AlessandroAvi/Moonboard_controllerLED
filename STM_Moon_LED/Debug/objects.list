@@ -1,5 +1,6 @@
 "Core/Src/LED.o"
 "Core/Src/debug.o"
+"Core/Src/dma.o"
 "Core/Src/gpio.o"
 "Core/Src/keypad.o"
 "Core/Src/main.o"

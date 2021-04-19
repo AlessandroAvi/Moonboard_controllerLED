@@ -1,21 +1,20 @@
 #include "LED.h"
 #include "gpio.h"
 #include "tim.h"
-#include "problems.h"
 #include <stdio.h>
 #include <ctype.h>
 
-#define LED_NUM 198
-#define ROW_NUM 18
-#define COL_NUM 11
 
-uint8_t __attribute__((section(".upper.rodata"))) problem_arr[ROW_NUM*COL_NUM*3] = {0};
+uint16_t pwmData[(24*MAX_LED)+50];
+uint8_t LED_Data[ROW_NUM*COL_NUM][4];
+uint8_t LED_Mod[ROW_NUM*COL_NUM][4];
+int datasentflag = 0;
 
 
 
 
 // *******************************************************************
-// 					MANIPULATION OF THE LED ARRAY
+// 					MANIPULATION OF THE LED MATRIX
 // *******************************************************************
 
 
@@ -63,85 +62,169 @@ uint8_t LED_findPos(char letter, uint8_t number){
 	return position;
 }
 
-/*
-void problem_genArray(uint32_t id){
 
-
+void problem_genArray(ProblemInfo *problem, uint32_t id){
 
 	uint16_t movesNum = 0;
 	uint16_t LedPos = 0;
 
-	problem_search(&problem, id);
+	// fill the struct with the info of the boulder searched
+	problem_search(problem, id);
 
 	// find the number of holds in the problem
-	while(problem.move_int[movesNum]  ){   // trovare metodo per definire lunghezza
+	while(problem->move_int[movesNum] !=0){
 		movesNum++;
 	}
 
 	// put to 0 all the colors for each LED
-	LED_setAllWhite();
+	LED_setAllBlack();
 
-	for(int i=0; i< movesNum; i++){
+	// for each move define the color of the corresponding LED
+	for(int i=0; i<movesNum; i++){
 
 		// transform letter and number in the led position
-		LedPos = LED_findPos(problem.move_char[i], problem.move_int[i]);
+		LedPos = LED_findPos(problem->move_char[i], problem->move_int[i]);
 
 		// light the led depending if it's start, top or else
-		if(i<=1 && problem.move_st[i]==true){
-			problem_arr[LedPos*3]   = 0;
-			problem_arr[LedPos*3+1] = 0;
-			problem_arr[LedPos*3+2] = 255;
-		}else if(i>1 && problem.move_st[i]==true){
-			problem_arr[LedPos*3]   = 255;
-			problem_arr[LedPos*3+1] = 0;
-			problem_arr[LedPos*3+2] = 0;
-		}else{
-			problem_arr[LedPos*3]   = 255;
-			problem_arr[LedPos*3+1] = 255;
-			problem_arr[LedPos*3+2] = 255;
+		if(i<=1 && problem->move_st[i]==true){		// start, color green
+			LED_Data[LedPos][1] = 0;
+			LED_Data[LedPos][2] = 0;
+			LED_Data[LedPos][3] = 255;
+		}else if(i>1 && problem->move_st[i]==true){	// top, color red
+			LED_Data[LedPos][1] = 255;
+			LED_Data[LedPos][2] = 0;
+			LED_Data[LedPos][3] = 0;
+		}else{										// middle, color white
+			LED_Data[LedPos][1] = 255;
+			LED_Data[LedPos][2] = 255;
+			LED_Data[LedPos][3] = 255;
 		}
 
 	}
 
 }
-*/
+
 
 
 void LED_setAllBlack(uint8_t *LEDbuffer){
 
-	for(int i=0; i<ROW_NUM*COL_NUM*3; i++){
-		//prob_arr[i]=0;
+	for(int i=0; i<ROW_NUM*COL_NUM; i++){
+		LED_Data[i][1]=0;
+		LED_Data[i][2]=0;
+		LED_Data[i][3]=0;
 	}
 
 }
+
 
 
 void LED_setAllWhite(uint8_t *LEDbuffer){
 
-	for(int i=0; i<ROW_NUM*COL_NUM*3; i++){
-		//prob_arr[i]=255;
+	for(int i=0; i<ROW_NUM*COL_NUM; i++){
+		LED_Data[i][1]=255;
+		LED_Data[i][2]=255;
+		LED_Data[i][3]=255;
 	}
 
 
 }
 
 
-
-
-
 // *******************************************************************
-// 					GENERATION OF PWM
+// 						GENERATION OF PWM
 // *******************************************************************
 
 
 
-void LED_light(){
+// sets the color of the LED
+void LED_setColor(int LEDnum, int red, int green, int blue){
+	LED_Data[LEDnum][0] = LEDnum;
+	LED_Data[LEDnum][1] = green;
+	LED_Data[LEDnum][2] = red;
+	LED_Data[LEDnum][3] = blue;
+}
 
-	for(int k=0; k<ROW_NUM*COL_NUM*3; k++){
 
 
+void LED_setBrightness(int brightness){
 
+#if USE_BRIGHTNESS
+	if(brightness > 45) brightness = 45;
 
+	for(int i=0; i<MAX_LED; i++){
+		LED_Mod[i][0] = LED_Data[i][0];
+		for(int j=0; j<4; j++){
+			float angle = 90-brightness;
+			angle = angle*3.14/180;
+			LED_Mod[i][j] = (LED_Data[i][j])/(tan(angle));
+		}
 	}
+#endif
 
 }
+
+
+
+void WS2811_Send(void){
+
+	uint32_t indx = 0;
+	uint32_t color;
+
+	// read from the color matrix each RGB color for each LED
+	for(int i=0; i<MAX_LED; i++){
+		color = ((LED_Mod[i][1]<<16) | (LED_Mod[i][2]<<8) | LED_Mod[i][3]);
+
+		// check each bit of the color number and create corresponfing PWM
+		for(int i=23; i>=0; i--){
+			if(color&(1<<i)){
+				pwmData[indx]=60;
+			}else{
+				pwmData[indx]=30;
+			}
+			indx++;
+		}
+	}
+
+	// wait 50 PWM pulses as a RESET after lighting all LED
+	for(int i=0; i<50; i++){
+		pwmData[indx] = 0;
+		indx++;
+	}
+
+	// start the transmission of the data just created
+	HAL_TIM_PWM_Start_DMA(&htim2, TIM_CHANNEL_1, (uint32_t *)pwmData, indx);
+	while(!datasentflag){};
+	datasentflag=0;
+
+}
+
+
+
+// code for checking just 1	LED
+void send_DMA(int green, int red, int blue){
+
+	uint32_t data = (green <<16) | (red <<8) | blue;
+
+	for(int i=23; i>=0; i--){
+
+		if(data&(1<<i)) pwmData[i] = 60;
+
+		else pwmData[i] = 30;
+	}
+
+	HAL_TIM_PWM_Start_DMA(&htim2, TIM_CHANNEL_1, (uint32_t *)pwmData, 24);
+}
+
+
+
+// *******************************************************************
+// 					DEFINITION OF LIST OF PROBLEMS
+// *******************************************************************
+
+
+void problem_search(ProblemInfo *problem, uint32_t id){
+
+
+
+}
+

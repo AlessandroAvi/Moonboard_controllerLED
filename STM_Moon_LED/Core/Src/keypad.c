@@ -217,7 +217,7 @@ uint8_t read_GPIO(){
 	return 22; // 22 is the no key number
 }
 
-uint8_t write_GPIO(uint8_t riga){
+void write_GPIO(uint8_t riga){
 
 	GPIO_PinState state_row1 = GPIO_PIN_RESET;
 	GPIO_PinState state_row2 = GPIO_PIN_RESET;
@@ -352,6 +352,8 @@ uint32_t keypad_getNumber_v2(){
 			PRINTF8("%d ", arr[i]);
 			i+=1;
 		}
+
+		key=22;
 
 		HAL_Delay(200);		// To avoid long press error
 	}
