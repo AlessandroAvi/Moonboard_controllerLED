@@ -333,7 +333,7 @@ uint32_t keypad_getNumber_v2(){
 
 		key = read_key_v2();		// returns the digit input
 
-		if(kei==NULL){
+		if(key==NULL){
 			PRINTF("\n\r     Something went wrong");
 		}else if(key==10){			// A, exit insertion number
 			PRINTF("\n\r     End of input mode");
