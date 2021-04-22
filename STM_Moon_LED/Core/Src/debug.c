@@ -1,3 +1,4 @@
+#include "main.h"
 #include "usart.h"
 #include "debug.h"
 

@@ -191,8 +191,8 @@ uint32_t keypad_getNumber(){
 
 // In this case the GPIO pins that should be connected to the keyboard are:
 
-// B6  -> row1
-// C7  -> row2
+// C7  -> row1
+// A9  -> row2
 // A8  -> row3
 // B10 -> row4
 
@@ -201,6 +201,7 @@ uint32_t keypad_getNumber(){
 // B3  -> col3
 // A10 -> col4
 
+// DEFINE 99 AS THE BAD VALUE THAT SHOULD NOT BE CONSIDERED
 
 // ********************************************************
 
@@ -209,33 +210,45 @@ uint32_t keypad_getNumber(){
 
 uint8_t read_GPIO(){
 
-	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4)) return 1;
-	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5)) return 2;
-	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3)) return 3;
-	if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10)) return 4;
+	if(!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4)){			// if GPIO is low
+		while(!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4));	// wait till GPIO return high
+		return 1;
+	}
+	if(!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5)){
+		while(!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5));
+		return 2;
+	}
+	if(!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3)){
+		while(!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3));
+		return 3;
+	}
+	if(!HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10)){
+		while(!HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10));
+		return 4;
+	}
 
-	return NULL;
+	return 99;
 }
 
 void write_GPIO(uint8_t riga){
 
-	GPIO_PinState state_row1 = GPIO_PIN_RESET;
-	GPIO_PinState state_row2 = GPIO_PIN_RESET;
-	GPIO_PinState state_row3 = GPIO_PIN_RESET;
-	GPIO_PinState state_row4 = GPIO_PIN_RESET;
+	GPIO_PinState state_row1 = GPIO_PIN_SET;
+	GPIO_PinState state_row2 = GPIO_PIN_SET;
+	GPIO_PinState state_row3 = GPIO_PIN_SET;
+	GPIO_PinState state_row4 = GPIO_PIN_SET;
 
 	if(riga==1){
-		state_row1 = GPIO_PIN_SET;
+		state_row1 = GPIO_PIN_RESET;
 	}else if(riga==2){
-		state_row2 = GPIO_PIN_SET;
+		state_row2 = GPIO_PIN_RESET;
 	}else if(riga==3){
-		state_row3 = GPIO_PIN_SET;
+		state_row3 = GPIO_PIN_RESET;
 	}else if(riga==4){
-		state_row4 = GPIO_PIN_SET;
+		state_row4 = GPIO_PIN_RESET;
 	}
 
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, state_row1);
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, state_row2);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, state_row1);
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, state_row2);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, state_row3);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, state_row4);
 }
@@ -270,7 +283,7 @@ uint8_t decode_key_v2(uint8_t row, uint8_t col){
 			if (col==4) key=60;
 			break;
 		default:
-			key=NULL;
+			key=99;
 			break;
 	}
 
@@ -281,8 +294,8 @@ uint8_t decode_key_v2(uint8_t row, uint8_t col){
 // Perform a polling on each row in order to detect the selection of a key
 uint8_t read_key_v2(){
 
-	uint8_t key = NULL;     		// 22 is the no key number
-	uint8_t col_read = NULL;
+	uint8_t key = 99;     		// 99 is the DISCARD number
+	uint8_t col_read = 99;
 
 	// stay in polling and wait for a button to be pressed
 	while(true){
@@ -290,29 +303,37 @@ uint8_t read_key_v2(){
 		// *** FIRST row
 		write_GPIO(1);						// write 4 status of row GPIO (enable GPIO of row1)
 		col_read = read_GPIO();				// read 4 status of col GPIO
-		if(col_read != NULL) key = decode_key_v2(1, col_read);		// decode which button has been pressed
-		if(key!=NULL) return key;
+		if(col_read != 99) {
+			key = decode_key_v2(1, col_read);		// decode which button has been pressed
+			return key;
+		}
 
 		// *** SECOND row
 		write_GPIO(2);
 		col_read = read_GPIO();
-		if(col_read != NULL) key = decode_key_v2(2, col_read);
-		if(key!=NULL) return key;
+		if(col_read != 99){
+			key = decode_key_v2(2, col_read);
+			return key;
+		}
 
 		// *** THIRD row
 		write_GPIO(3);
 		col_read = read_GPIO();
-		if(col_read != NULL) key = decode_key_v2(3, col_read);
-		if(key!=NULL) return key;
+		if(col_read != 99){
+			key = decode_key_v2(3, col_read);
+			return key;
+		}
 
 		// *** FORTH row
 		write_GPIO(4);
 		col_read = read_GPIO();
-		if(col_read != NULL) key = decode_key_v2(4, col_read);
-		if(key!=NULL) return key;
+		if(col_read != 99){
+			key = decode_key_v2(4, col_read);
+			return key;
+		}
 	}
 
-	return NULL;
+	return 99;
 }
 
 
@@ -333,10 +354,10 @@ uint32_t keypad_getNumber_v2(){
 
 		key = read_key_v2();		// returns the digit input
 
-		if(key==NULL){
+		if(key==99){
 			PRINTF("\n\r     Something went wrong");
 		}else if(key==10){			// A, exit insertion number
-			PRINTF("\n\r     End of input mode");
+			PRINTF("A-->end input mode");
 			break;
 		}else if(key==20){		// B, nothing
 			PRINTF("B ");
@@ -356,9 +377,9 @@ uint32_t keypad_getNumber_v2(){
 			i+=1;
 		}
 
-		key=NULL;
+		key=99;
 
-		HAL_Delay(200);		// To avoid long press error
+		HAL_Delay(1000);		// To avoid long press error
 	}
 
 	// Transform the array in number

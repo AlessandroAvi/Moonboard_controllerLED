@@ -127,9 +127,9 @@ int main(void)
 	  if(BLUE_BUTTON){
 
 		  problemID = keypad_getNumber_v2();
-		  problem_genArray(problemID, &problem);
+		  //problem_genArray(problemID, &problem);
 
-		  WS2811_Send();
+		  //WS2811_Send();
 
 		  BLUE_BUTTON = false;
 	  }
