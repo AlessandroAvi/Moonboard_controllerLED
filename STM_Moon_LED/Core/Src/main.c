@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "dma.h"
+#include "i2c.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -29,7 +30,7 @@
 #include "stdbool.h"
 #include "keypad.h"
 #include "LED.h"
-
+//#include "lcd16x2_i2c.h"
 
 /* USER CODE END Includes */
 
@@ -112,7 +113,17 @@ int main(void)
   MX_DMA_Init();
   MX_USART2_UART_Init();
   MX_TIM2_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
+
+  // turn on LED if LCD screen is properly connected to i2c
+  if(lcd16x2_i2c_init(&hi2c1)){
+ 	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+   }
+  lcd16x2_i2c_clear();
+   lcd16x2_i2c_printf("Train hard,");
+   lcd16x2_i2c_2ndLine();
+   lcd16x2_i2c_printf("climb harder");
 
   struct ProblemInfo problem;
   uint32_t problemID = 0;
@@ -125,9 +136,21 @@ int main(void)
   {
 
 	  if(BLUE_BUTTON){
-
+		  lcd16x2_i2c_clear();
 		  problemID = keypad_getNumber_v2();
+
 		  //problem_genArray(problemID, &problem);
+		  char* problemName = "boulder1";
+		  char* problemGrade = "7A+ light";
+
+		  lcd16x2_i2c_clear();
+		  lcd16x2_i2c_printf("Name:");
+		  lcd16x2_i2c_printf(problemName);
+		  lcd16x2_i2c_2ndLine();
+		  lcd16x2_i2c_printf("Grad:");
+		  lcd16x2_i2c_printf(problemGrade);
+
+
 
 		  //WS2811_Send();
 
