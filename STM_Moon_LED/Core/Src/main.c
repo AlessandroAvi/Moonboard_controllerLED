@@ -30,6 +30,7 @@
 #include "stdbool.h"
 #include "keypad.h"
 #include "LED.h"
+#include "createProblem.h"
 //#include "lcd16x2_i2c.h"
 
 /* USER CODE END Includes */
@@ -120,7 +121,10 @@ int main(void)
   if(lcd16x2_i2c_init(&hi2c1)){
  	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
    }
-  lcd16x2_i2c_clear();
+   lcd16x2_i2c_clear();
+   lcd16x2_i2c_2ndLine();
+   lcd16x2_i2c_clear();
+
    lcd16x2_i2c_printf("Train hard,");
    lcd16x2_i2c_2ndLine();
    lcd16x2_i2c_printf("climb harder");
@@ -140,15 +144,18 @@ int main(void)
 		  problemID = keypad_getNumber_v2();
 
 		  //problem_genArray(problemID, &problem);
-		  char* problemName = "boulder1";
-		  char* problemGrade = "7A+ light";
+		  //char* problemName = "boulder1";
+		  //char* problemGrade = "7A+ light";
+
+		  struct Problem p;
+		  createProblem(&p,problemID);
 
 		  lcd16x2_i2c_clear();
 		  lcd16x2_i2c_printf("Name:");
-		  lcd16x2_i2c_printf(problemName);
+		  lcd16x2_i2c_printf(p.name);
 		  lcd16x2_i2c_2ndLine();
 		  lcd16x2_i2c_printf("Grad:");
-		  lcd16x2_i2c_printf(problemGrade);
+		  lcd16x2_i2c_printf(p.grade);
 
 
 
