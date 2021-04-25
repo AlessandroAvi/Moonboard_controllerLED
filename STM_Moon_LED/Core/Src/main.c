@@ -121,14 +121,17 @@ int main(void)
   if(lcd16x2_i2c_init(&hi2c1)){
  	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
    }
-   lcd16x2_i2c_clear();
-   lcd16x2_i2c_2ndLine();
-   lcd16x2_i2c_clear();
+  for (int jj=0; jj<5; jj++){
+	   lcd16x2_i2c_clear();
+	   lcd16x2_i2c_2ndLine();
+	   lcd16x2_i2c_clear();
+  }
 
-   lcd16x2_i2c_printf("Train hard,");
+   lcd16x2_i2c_printf("><>   FISH.  <><");
    lcd16x2_i2c_2ndLine();
-   lcd16x2_i2c_printf("climb harder");
+   lcd16x2_i2c_printf("===   BOARD  ===");
 
+   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
   struct ProblemInfo problem;
   uint32_t problemID = 0;
 
