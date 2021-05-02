@@ -30,8 +30,7 @@
 #include "stdbool.h"
 #include "keypad.h"
 #include "LED.h"
-#include "createProblem.h"
-//#include "lcd16x2_i2c.h"
+//#include "createProblem.h"
 
 /* USER CODE END Includes */
 
@@ -117,23 +116,23 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
+
   // turn on LED if LCD screen is properly connected to i2c
   if(lcd16x2_i2c_init(&hi2c1)){
- 	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
-   }
-  for (int jj=0; jj<5; jj++){
-	   lcd16x2_i2c_clear();
-	   lcd16x2_i2c_2ndLine();
-	   lcd16x2_i2c_clear();
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
   }
+  lcd16x2_i2c_clear();
+  lcd16x2_i2c_2ndLine();
+  lcd16x2_i2c_clear();
 
-   lcd16x2_i2c_printf("><>   FISH.  <><");
-   lcd16x2_i2c_2ndLine();
-   lcd16x2_i2c_printf("===   BOARD  ===");
+  lcd16x2_i2c_printf("><>   FISH.  <><");
+  lcd16x2_i2c_2ndLine();
+  lcd16x2_i2c_printf("===   BOARD  ===");
 
-   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
-  struct ProblemInfo problem;
-  uint32_t problemID = 0;
+  int i=1;
+  // Definition of data
+  struct Problem p;			// struct that contains the info related to the problem
+  uint32_t problemID = 0;	// ID that reppresents the number of the problem
 
   /* USER CODE END 2 */
 
@@ -144,14 +143,16 @@ int main(void)
 
 	  if(BLUE_BUTTON){
 		  lcd16x2_i2c_clear();
-		  problemID = keypad_getNumber_v2();
 
-		  //problem_genArray(problemID, &problem);
-		  //char* problemName = "boulder1";
-		  //char* problemGrade = "7A+ light";
 
-		  struct Problem p;
-		  createProblem(&p,problemID);
+
+		  problemID = keypad_getNumber();
+
+
+		  problem_fetch(&p,problemID);
+
+		  problem_genArray(&p, problemID);
+
 
 		  lcd16x2_i2c_clear();
 		  lcd16x2_i2c_printf("Name:");
@@ -161,8 +162,13 @@ int main(void)
 		  lcd16x2_i2c_printf(p.grade);
 
 
+		  //LED_setAllWhite();
 
-		  //WS2811_Send();
+		  LED_setAllBlack();
+		  LED_setColor(i, 0, 250, 0);
+		  i++;
+
+		  WS2811_Send();
 
 		  BLUE_BUTTON = false;
 	  }

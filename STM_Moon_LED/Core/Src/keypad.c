@@ -46,6 +46,9 @@
 
 // ********************************************************
 
+//#define debug_output
+
+
 
 uint8_t read_GPIO(){
 
@@ -68,6 +71,8 @@ uint8_t read_GPIO(){
 
 	return 99;
 }
+
+
 
 void write_GPIO(uint8_t riga){
 
@@ -93,7 +98,8 @@ void write_GPIO(uint8_t riga){
 }
 
 
-uint8_t decode_key_v2(uint8_t row, uint8_t col){
+
+uint8_t decode_key(uint8_t row, uint8_t col){
 	uint8_t key;
 
 	switch(row){
@@ -130,8 +136,9 @@ uint8_t decode_key_v2(uint8_t row, uint8_t col){
 }
 
 
+
 // Perform a polling on each row in order to detect the selection of a key
-uint8_t read_key_v2(){
+uint8_t read_key(){
 
 	uint8_t key = 99;     		// 99 is the DISCARD number
 	uint8_t col_read = 99;
@@ -140,10 +147,10 @@ uint8_t read_key_v2(){
 	while(true){
 
 		// *** FIRST row
-		write_GPIO(1);						// write 4 status of row GPIO (enable GPIO of row1)
-		col_read = read_GPIO();				// read 4 status of col GPIO
+		write_GPIO(1);								// write 4 status of row GPIO (enable GPIO of row1)
+		col_read = read_GPIO();						// read 4 status of col GPIO
 		if(col_read != 99) {
-			key = decode_key_v2(1, col_read);		// decode which button has been pressed
+			key = decode_key(1, col_read);		// decode which button has been pressed
 			return key;
 		}
 
@@ -151,7 +158,7 @@ uint8_t read_key_v2(){
 		write_GPIO(2);
 		col_read = read_GPIO();
 		if(col_read != 99){
-			key = decode_key_v2(2, col_read);
+			key = decode_key(2, col_read);
 			return key;
 		}
 
@@ -159,7 +166,7 @@ uint8_t read_key_v2(){
 		write_GPIO(3);
 		col_read = read_GPIO();
 		if(col_read != 99){
-			key = decode_key_v2(3, col_read);
+			key = decode_key(3, col_read);
 			return key;
 		}
 
@@ -167,7 +174,7 @@ uint8_t read_key_v2(){
 		write_GPIO(4);
 		col_read = read_GPIO();
 		if(col_read != 99){
-			key = decode_key_v2(4, col_read);
+			key = decode_key(4, col_read);
 			return key;
 		}
 	}
@@ -176,7 +183,8 @@ uint8_t read_key_v2(){
 }
 
 
-uint32_t keypad_getNumber_v2(){
+
+uint32_t keypad_getNumber(){
 
 	uint8_t inputDigit[10];
 	uint32_t number=0;
@@ -186,47 +194,64 @@ uint32_t keypad_getNumber_v2(){
 	char msg[100];
 	int msg_len;
 
+#ifdef debug_output
 	PRINTF("\n\r The digits selected are: ");
+#endif
+
 	lcd16x2_i2c_printf("ID:  ");
 	// until I press the ENTER button do:
 	while(true){
 
-		key = read_key_v2();		// returns the digit input
+		key = read_key();		// returns the digit input
 
 		if(key==99){
 			lcd16x2_i2c_printf("Error...");
+#ifdef debug_output
 			PRINTF("\n\r     Something went wrong");
+#endif
 		}else if(key==10){			// A, exit insertion number
 			lcd16x2_i2c_printf(";");
+#ifdef debug_output
 			PRINTF("A-->end input mode");
+#endif
 			break;
 		}else if(key==20){		// B, nothing
 			lcd16x2_i2c_printf("B");
+#ifdef debug_output
 			PRINTF("B");
+#endif
 		}else if(key==30){		// C, nothing
 			lcd16x2_i2c_printf("C");
+#ifdef debug_output
 			PRINTF("C ");
+#endif
 		}else if(key==40){		// *, nothing
 			lcd16x2_i2c_printf("*");
+#ifdef debug_output
 			PRINTF("* ");
+#endif
 		}else if(key==50){		// #, nothing
 			lcd16x2_i2c_printf("#");
+#ifdef debug_output
 			PRINTF("# ");
+#endif
 		}else if(key==60){		// D, delete last digit
 			i=-1;
 			inputDigit[i] = 0;
 			lcd16x2_i2c_printf("del");
+#ifdef debug_output
 			PRINTF("DEL");
+#endif
 		}else if(key>=0 && key<=9){	// number keys
 			inputDigit[i] = key;
 			lcd16x2_i2c_printf("%d", inputDigit[i]);
+#ifdef debug_output
 			PRINTF8("%d ", inputDigit[i]);
+#endif
 			i+=1;
 		}
 
 		key=99;
-
-		//HAL_Delay(1000);		// To avoid long press error
 	}
 
 	// Transform the array in number
@@ -234,11 +259,20 @@ uint32_t keypad_getNumber_v2(){
 		number += pow(10, j-1)*inputDigit[i-j];
 	}
 
-
+#ifdef debug_output
 	PRINTF32("\n\r     Final number obtained is: %d", number);
+#endif
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
 	return number;
 }
+
+
+
+
+
+
+
+

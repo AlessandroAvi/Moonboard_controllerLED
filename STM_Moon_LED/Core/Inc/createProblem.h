@@ -11,4 +11,4 @@ typedef struct Problem{
     char* startFinish[15];
 };
 
-void createProblem(struct Problem *p, int id);
+void problem_fetch(struct Problem *p, int id);

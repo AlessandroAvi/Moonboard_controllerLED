@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <string.h>
-#include "createProblem.h"
 #include "debug.h"
+#include "createProblem.h"
+
 
 /*
 void createProblem(struct Problem *p, int id){
@@ -26,7 +27,7 @@ void createProblem(struct Problem *p, int id){
     }
 }
 */
-void createProblem(struct Problem* p, int id){
+void problem_fetch(struct Problem* p, int id){
 	switch(id){
 		case 0 :
 			strcpy(p->name,"FAR FROM THE MADDING CROWD");
