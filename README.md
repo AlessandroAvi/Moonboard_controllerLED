@@ -27,6 +27,7 @@ The components used are a microcontroller [STM32 F401RE](https://www.amazon.com/
 
 - script that download and updates list of problem in JSON format
 - feature on the app that saves the boulder already sent
+- feature on the app search by name
 - possible wi fi/bluetooth connection between phone and STM
 
 
