@@ -78,5 +78,6 @@ library used:
 
 ## PHOTOS OF THE BOARD
 
+![name-of-you-image](https://github.com/AlessandroAvi/Moonboard_LED_DIY/blob/main/Img/boardEmpty.jpg) ![name-of-you-image](https://github.com/AlessandroAvi/Moonboard_LED_DIY/blob/main/Img/boardFull.jpg) 
 
 
