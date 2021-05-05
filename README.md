@@ -34,7 +34,9 @@ The components used are a microcontroller [STM32 F401RE](https://www.amazon.com/
 ## LED EXPLANATION
 
 model: WS2811 25 cm spacing
+
 AliExpress link: [link](https://it.aliexpress.com/wholesale?catId=0&initiative_id=SB_20210505001530&SearchText=ws2811+25cm)
+
 video tutorial that I used: [link](https://www.youtube.com/watch?v=-3VKkTSAytM&list=PLKbve1xdC21o1C_YVfbdDPc5UOA68WjFB&index=3&t=0s)
 
 The serie of LED WS2811 can be easily controlled with just 3 lines connected to the STM. Two of these lines are GND and VDD (in my case 5 Volt but on the marker there exist also the 12 V version), the third is the actual data line control. From the [data sheet](https://www.alldatasheet.com/datasheet-pdf/pdf/1132633/WORLDSEMI/WS2811.html) of the LED is quite easy to understand how they work. 
@@ -57,7 +59,9 @@ After this a simple routine fills an array called `pwmData` with the values of t
 ## KEYPAD EXPLANATION
 
 model: keypad for arduino 4x4
+
 amazon link: [link](https://www.amazon.com/Matrix-Membrane-Switch-Keyboard-Arduino/dp/B07THCLGCZ/ref=sr_1_3?dchild=1&keywords=arduino+keypad&qid=1620202495&sr=8-3)
+
 webiste tutorial I used: [link](https://deepbluembedded.com/stm32-keypad-interfacing-library/)
 
 This type of keypad is quite easy to use, there are 8 total connections where 4 are inputs (rows) and 4 are outputs (columns). 
@@ -76,7 +80,9 @@ By knowing the last row that has been set to low and also by knowing the column 
 ## LCD EXPLANATION
 
 model: display LCD ICQUANZX 16x2
+
 amazon link: [link](https://www.amazon.com/ICQUANZX-Interface-Backlight-Ar-duino-MEGA2560/dp/B08XQMKXW1/ref=sr_1_2?dchild=1&keywords=display+LCD+ICQUANZX+16x2&qid=1620202398&sr=8-2)
+
 library used: 
 
 
