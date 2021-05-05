@@ -1,21 +1,18 @@
 # IDEA FOR MOONBOARD LED PROJECT
 
-This project contains the code used for the simulation of the moonboard LED kit. The project uses a STM32 nucleo F401RE, a simple keypad, a LCD screen and LED lights WS2811. The usage of this project is based also on a custom made application for android that simulates the moonboard app for filtering and selecting boulder problems. 
+This repository contains the code used for the simulation of the moonboard LED kit. The project uses a STM32 nucleo F401RE, an arduino keypad 4x4, an LCD screen and LED lights WS2811. This project is based on a custom made android app used for filtering and visualizing boulder problems. 
 
-The idea is to use the custom made app on the phone, this allows the user to filter through problems and see graphically the layout of the board with higlighted holds depending on the selected problem. The app also outputs an ID number, which is then used as an input to the SMT mictocontroller (trought a keypad) for specifiyng the desired problem. Thanks by the selection of the ID the STM microcontroller will then switch on specific LEDS.
+The idea is to use the custom made app on the phone for filtering and visualizing the boulder problems together with its unique ID. The ID (which has been added to each single problem in order to make them easy to search) is then used by the user as an input for the keypad mounted on the STM mirocontroller. Thanks to this ID, the mircocontroller is able to find the correct boulder problem and later light correctly the holds used by it. 
 
-The components used are a microcontroller [STM32 F401RE](https://www.amazon.com/Matrix-Membrane-Switch-Keyboard-Arduino/dp/B07THCLGCZ/ref=sr_1_3?dchild=1&keywords=keypad+arduino&qid=1620036372&sr=8-3) [LCD screen]() [keypad]() [LED WS2811]()
+The components used are a microcontroller [STM32 F401RE](https://www.amazon.com/NUCLEO-F401RE-Nucleo-64-Development-STM32F401RE-connectivity/dp/B07JYBPWN4) [LCD screen](https://www.amazon.com/ICQUANZX-Interface-Backlight-Ar-duino-MEGA2560/dp/B08XQMKXW1/ref=sr_1_2?dchild=1&keywords=display+LCD+ICQUANZX+16x2&qid=1620202398&sr=8-2) [keypad](https://www.amazon.com/Matrix-Membrane-Switch-Keyboard-Arduino/dp/B07THCLGCZ/ref=sr_1_3?dchild=1&keywords=arduino+keypad&qid=1620202495&sr=8-3) [LED WS2811](https://it.aliexpress.com/wholesale?catId=0&initiative_id=SB_20210505001530&SearchText=ws2811+25cm) (leds need to have 25 cm of spacing in between LEDs because of the distance between moonboard holds).
 
-<img src="C:\Users\massi\OneDrive\Documenti\STM32 projects\Moonboard_LED\Img\keypad.jpg" style="zoom:25%;" />  <img src="C:\Users\massi\OneDrive\Documenti\STM32 projects\Moonboard_LED\Img\STMF401RE.jpg" style="zoom: 25%;" /> <img src="C:\Users\massi\OneDrive\Documenti\STM32 projects\Moonboard_LED\Img\WS2811_off.jpg" style="zoom:33%;" /> <img src="C:\Users\massi\OneDrive\Documenti\STM32 projects\Moonboard_LED\Img\WS2811_on.jpg" style="zoom:33%;" />
+ 
 
+## GENERAL IDEA OF THE STM CODE
 
-
-
-
-## GENERAL IDEA OF THE CODE
-
-- **Blue burron interrupt** I press the blue button and activate the function for catching the keypad number
-- **`keypad_GetNumber`** number gets saved
+- **search on the app** the boulder problem that I want to do, display in on the phone screen together with the ID
+- **Blue button interrupt** I press the blue button and activate the function for catching the keypad number
+- **`keypad_GetNumber`** number gets saved as I insert the digits (press A when finished, press D to delete last digit)
   - polling mode, wait for a key to be pressed, store digit in an array, transform array in number, return ID number
 - **`problem_fetch`** STM searches the boulder assigned to that ID in a "switch case" function already written 
   - the fnunction "switch case" is copy pasted from a script previously run by a console app on the lapton, 
@@ -26,26 +23,56 @@ The components used are a microcontroller [STM32 F401RE](https://www.amazon.com/
 
  
 
-
-
 ## TO DO
 
 - script that download and updates list of problem in JSON format
+- feature on the app that saves the boulder already sent
+- possible wi fi/bluetooth connection between phone and STM
+
+
 
 ## LED EXPLANATION
 
-model: WS2811
-AliExpress link: 
+model: WS2811 25 cm spacing
+AliExpress link: [link](https://it.aliexpress.com/wholesale?catId=0&initiative_id=SB_20210505001530&SearchText=ws2811+25cm)
+video tutorial that I used: [link](https://www.youtube.com/watch?v=-3VKkTSAytM&list=PLKbve1xdC21o1C_YVfbdDPc5UOA68WjFB&index=3&t=0s)
 
-The serie of LED WS2811 can be easily controlled with just 3 lines connected to the microcontrolloer. Two of these lines are GND and VDD (in my case 5 Volt), the third is the actual data line control. From the [data sheet](https://www.alldatasheet.com/datasheet-pdf/pdf/1132633/WORLDSEMI/WS2811.html) of the LED is quite easy to get how they work. 
+The serie of LED WS2811 can be easily controlled with just 3 lines connected to the STM. Two of these lines are GND and VDD (in my case 5 Volt but on the marker there exist also the 12 V version), the third is the actual data line control. From the [data sheet](https://www.alldatasheet.com/datasheet-pdf/pdf/1132633/WORLDSEMI/WS2811.html) of the LED is quite easy to understand how they work. 
 
-The data line is used for senting to the LED the infomrations related to the color that they should light up. Each LED is can create 255 levels of color for the channels Red, Green, Blue. Sicen the data line is just one it requires a signal specifically generated. This specific model of LED requires a signal
+Each single leed is able to reppresent 255 levels of red, green and blue. The information about the color cannel should be given to the LEDs in order, starting from the first encountered. The signal on teh data line needs to be sent in bit, so basically every single led requires 24 bit for a specification of 3 color channels (8 bt for red, 8 bit for green, 8 bit for blue). Since there is just 1 line for the control, the LEDs require that the bit signal is sent at a specific frequency, in this case the model WS2811 can work at two frequencies, 800 KHz ad 400 KHz (I tested only the 800 KHz). 
+In order to distinguish 1 bits from 0 bits the LED requires the usage of a PWM signal, where the ducty cycle value is the variable that should be controlled. From the data sheet we get:
 
-Each single LED behaves as a repetitor, where it catches the signal from the data line, removes some information that is dedicated for that specific LED and repeats the signal. The control of the LED requires the use of a PWM signal, where the duty cycle defines the information sent. A duty cycle of 48% reppresents a bit 1, a dytu cycle of 18% reppresents a bit 0. 
+So a 0 bit signal should stay highfor $0.5 \mu s$ and low for $2 \mu s$, while a 1 bit should stay high for $1.2 \mu s$ and low for $1.3 \mu s$; note that the total time of the signal is $2.5 \mu s$, which corresponds to 400 KHz. To have a general definition of the duty cycle just define the in term of percentage:
+
+- 0 bit -> duty cycle = $20\%$
+- 1 bit -> duty cycle = $48\%$
+
+Additionally there is also the RESET signal, which should be of at least $50 \mu s$. The purpose of this signal is to tell to the LEDs that the control signal is going to start or finish, in fact it's necessary to put it at the beginning and at the end of the PWM. Which basically means that for the first and last $50 \mu s$ the PWM should have a duty cycle of $0\%$ (in the case of 800 KHz $50 \mu s$ corresponds to 40 cycles).   
+
+In the code I developed I use the DMA to have better performance and easily send the signal through the PWM. The code basically generates a matrix 198x3 (there are 198 holds on the moonboard, 3 are the color values for each one), fills it with 0 values to have all LED black. After fetching the boulder problem and translating the couple letter-number into a number that reppresents the i-th LED position (all the 198 LED are connected in series, so it's necessary to transform the 2 D reppresentation of the hold position into a number), the code sets to white/green/red only the holds used by the problem (color depends on if it's start, top, or middle). 
+After this a simple routine fills an array called `pwmData` with the values of the duty cycles (40 cycles reset + cycles for the LED + 40 cycles for reset). Note that each single position of the `pwmData` array reppresent one bit of the numbers reppresenting the color for each LED. So if the matrix containing the colors was a 198x3 matrix (total 596), this new array `pwmData` has a length of (198x3x8)+100, where 8 is the dimension of each color, 198 the number of LEDs, 3 the number of colors for each LED, 80 is the number of cycles that have to be put to 0 for the reset command. Finally this array is sent to the PWM peripheral which will generate a signal depending on the duty cycles specified. 
 
 ## KEYPAD EXPLANATION
 
+model: keypad for arduino 4x4
+amazon link: [link](https://www.amazon.com/Matrix-Membrane-Switch-Keyboard-Arduino/dp/B07THCLGCZ/ref=sr_1_3?dchild=1&keywords=arduino+keypad&qid=1620202495&sr=8-3)
+webiste tutorial I used: [link](https://deepbluembedded.com/stm32-keypad-interfacing-library/)
+
+This type of keypad is quite easy to use, there are 8 total connections where 4 are inputs (rows) and 4 are outputs (columns). 
+The kaypad is made in the following way:
+
+
+The rows and cols are connected through a switch on each button. By pressing one button the switch closes and two lines (one from the rows and one from the cols) are shorted together. 
+The idea for obtaining a signal from this device is to use a polling mode in which 3 rows are set on high level and 1 row on low level (and iteritevly change the row that is brought to low level). Each time this is performed I read also the 4 lines coming from the columns, in this way is possible to understand if a button press has occurred, this because a short circuit is generated on a button press  (important to set with a pull-up all the column lines, so they are high by default and the short circuit is able to bring it down only when necessary). 
+By knowing the last row that has been set to low and also by knowing the column that has been short circuited to low, it's immediate to find out which button has been pressed. 
+
+
+
 ## LCD EXPLANATION
+
+model: display LCD ICQUANZX 16x2
+amazon link: [link](https://www.amazon.com/ICQUANZX-Interface-Backlight-Ar-duino-MEGA2560/dp/B08XQMKXW1/ref=sr_1_2?dchild=1&keywords=display+LCD+ICQUANZX+16x2&qid=1620202398&sr=8-2)
+library used: 
 
 
 

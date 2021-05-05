@@ -129,7 +129,7 @@ int main(void)
   lcd16x2_i2c_2ndLine();
   lcd16x2_i2c_printf("===   BOARD  ===");
 
-  int i=1;
+  int i=0;
   // Definition of data
   struct Problem p;			// struct that contains the info related to the problem
   uint32_t problemID = 0;	// ID that reppresents the number of the problem
@@ -142,35 +142,42 @@ int main(void)
   {
 
 	  if(BLUE_BUTTON){
-		  lcd16x2_i2c_clear();
+		  //lcd16x2_i2c_clear();
 
 
 
-		  problemID = keypad_getNumber();
+		  //problemID = keypad_getNumber();
 
 
-		  problem_fetch(&p,problemID);
+		  //problem_fetch(&p,problemID);
 
-		  problem_genArray(&p, problemID);
-
-
-		  lcd16x2_i2c_clear();
-		  lcd16x2_i2c_printf("Name:");
-		  lcd16x2_i2c_printf(p.name);
-		  lcd16x2_i2c_2ndLine();
-		  lcd16x2_i2c_printf("Grad:");
-		  lcd16x2_i2c_printf(p.grade);
+		  //problem_genArray(&p, problemID);
 
 
-		  //LED_setAllWhite();
+		  //lcd16x2_i2c_clear();
+		  //lcd16x2_i2c_printf("Name:");
+		  //lcd16x2_i2c_printf(p.name);
+		  //lcd16x2_i2c_2ndLine();
+		  //lcd16x2_i2c_printf("Grad:");
+		  //lcd16x2_i2c_printf(p.grade);
 
-		  LED_setAllBlack();
-		  LED_setColor(i, 0, 250, 0);
+
+		  LED_setAllWhite();
+
+		  //LED_setAllBlack();
+		  //LED_setColor(i, 255, 255, 255);
 		  i++;
 
 		  WS2811_Send();
 
-		  BLUE_BUTTON = false;
+		  HAL_Delay(50);
+
+		  if(i==200){
+			  BLUE_BUTTON=false;
+		  }
+
+		  //BLUE_BUTTON = false;
+
 	  }
 
 
