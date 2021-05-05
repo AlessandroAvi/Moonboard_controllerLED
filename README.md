@@ -6,7 +6,7 @@ The idea is to use the custom made app on the phone, this allows the user to fil
 
 The components used are a microcontroller [STM32 F401RE](https://www.amazon.com/Matrix-Membrane-Switch-Keyboard-Arduino/dp/B07THCLGCZ/ref=sr_1_3?dchild=1&keywords=keypad+arduino&qid=1620036372&sr=8-3) [LCD screen]() [keypad]() [LED WS2811]()
 
-<img src="C:\Users\massi\OneDrive\Documenti\STM32 projects\Moonboard_LED\Img\keypad.jpg" style="zoom:25%;" />  <img src="C:\Users\massi\OneDrive\Documenti\STM32 projects\Moonboard_LED\Img\STMF401RE.jpg" style="zoom: 25%;" /> <img src="C:\Users\massi\OneDrive\Documenti\STM32 projects\Moonboard_LED\Img\WS2811_off.jpg" style="zoom:33%;" /> <img src="C:\Users\massi\OneDrive\Documenti\STM32 projects\Moonboard_LED\Img\WS2811_on.jpg" style="zoom:33%;" />
+![name-of-you-image](https://github.com/AlessandroAvi/Moonboard_LED_DIY/blob/main/Img/STMF401RE.jpg)
 
 
 
