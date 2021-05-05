@@ -81,7 +81,7 @@ By knowing the last row that has been set to low and also by knowing the column 
 
 model: display LCD ICQUANZX 16x2
 
-amazon link: [link](https://www.amazon.com/ICQUANZX-Interface-Backlight-Ar-duino-MEGA2560/dp/B08XQMKXW1/ref=sr_1_2?dchild=1&keywords=display+LCD+ICQUANZX+16x2&qid=1620202398&sr=8-2)
+amazon link: [link](https://www.amazon.com/ICQUANZX-Interface-Backlight-Ar-duino-MEGA2560/dp/B08XQMKXW1/ref=sr_1_2?dchild=1&keywords=display+LCD+ICQUANZX+16x2&qid=1620202398&sr=8-2){width=50%}
 
 library used: 
 
