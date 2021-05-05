@@ -1,0 +1,16 @@
+Instruction on how to use the script : 
+
+- download the json file from the Moonboard official site
+	(further instructions regarding this step will be provided)
+	
+- depending on the set of holds you want to use, edit the `setB` variable in the pyton file 
+
+- run the script by typing `python3 generate_code.py` in the terminal (Linux)
+  or run it in your IDE of choice
+  
+- the output files of the script are  
+	> STM32_code.txt 	  : contains the switch/case in C language to be 
+             			    copied and pasted for the STM32 
+	> filtered_problems.json : contains the filtered problems from the original json file. 
+       			    The problem ID matches the one in the txt file. 
+		    		    A new field called 'Sended' has been added (=false by default) 
