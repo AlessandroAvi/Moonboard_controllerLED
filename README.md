@@ -6,7 +6,7 @@ The idea is to use the custom made app on the phone for filtering and visualizin
 
 The components used are a microcontroller [STM32 F401RE](https://www.amazon.com/NUCLEO-F401RE-Nucleo-64-Development-STM32F401RE-connectivity/dp/B07JYBPWN4) [LCD screen](https://www.amazon.com/ICQUANZX-Interface-Backlight-Ar-duino-MEGA2560/dp/B08XQMKXW1/ref=sr_1_2?dchild=1&keywords=display+LCD+ICQUANZX+16x2&qid=1620202398&sr=8-2) [keypad](https://www.amazon.com/Matrix-Membrane-Switch-Keyboard-Arduino/dp/B07THCLGCZ/ref=sr_1_3?dchild=1&keywords=arduino+keypad&qid=1620202495&sr=8-3) [LED WS2811](https://it.aliexpress.com/wholesale?catId=0&initiative_id=SB_20210505001530&SearchText=ws2811+25cm) (leds need to have 25 cm of spacing in between LEDs because of the distance between moonboard holds).
 
- 
+ ![name-of-you-image](https://github.com/AlessandroAvi/Moonboard_LED_DIY/blob/main/Img/material.png)
 
 ## GENERAL IDEA OF THE STM CODE
 
