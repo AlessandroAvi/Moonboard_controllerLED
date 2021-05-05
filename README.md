@@ -63,6 +63,8 @@ webiste tutorial I used: [link](https://deepbluembedded.com/stm32-keypad-interfa
 This type of keypad is quite easy to use, there are 8 total connections where 4 are inputs (rows) and 4 are outputs (columns). 
 The kaypad is made in the following way:
 
+ ![name-of-you-image](https://github.com/AlessandroAvi/Moonboard_LED_DIY/blob/main/Img/Keypad_circuit.jpg)
+
 The rows and cols are connected through a switch on each button. By pressing one button the switch closes and two lines (one from the rows and one from the cols) are shorted together. 
 
 The idea for obtaining a signal from this device is to use a polling mode in which 3 rows are set on high level and 1 row on low level (and iteritevly change the row that is brought to low level). Each time this is performed I read also the 4 lines coming from the columns, in this way is possible to understand if a button press has occurred, this because a short circuit is generated on a button press  (important to set with a pull-up all the column lines, so they are high by default and the short circuit is able to bring it down only when necessary). 
