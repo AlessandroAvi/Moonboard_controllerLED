@@ -1,6 +1,17 @@
 # IDEA FOR MOONBOARD LED PROJECT
 
+<<<<<<< HEAD
 This repository contains the code used for the simulation of the moonboard LED kit. The project uses a STM32 nucleo F401RE, an arduino keypad 4x4, an LCD screen and LED lights WS2811. This project is based on a custom made android app used for filtering and visualizing boulder problems. 
+=======
+This project contains the code used for the simulation of the moonboard LED kit. The project uses a STM32 nucleo F401RE, a simple keypad, a LCD screen and LED lights WS2811. The usage of this project is based also on a custom made application for android that simulates the moonboard app for filtering and selecting boulder problems. 
+
+The idea is to use the custom made app on the phone, this allows the user to filter through problems and see graphically the layout of the board with higlighted holds depending on the selected problem. The app also outputs an ID number, which is then used as an input to the SMT mictocontroller (trought a keypad) for specifiyng the desired problem. Thanks by the selection of the ID the STM microcontroller will then switch on specific LEDS.
+
+The components used are a microcontroller [STM32 F401RE](https://www.amazon.com/Matrix-Membrane-Switch-Keyboard-Arduino/dp/B07THCLGCZ/ref=sr_1_3?dchild=1&keywords=keypad+arduino&qid=1620036372&sr=8-3) [LCD screen]() [keypad]() [LED WS2811]()
+
+![name-of-you-image](https://github.com/AlessandroAvi/Moonboard_LED_DIY/blob/main/Img/STMF401RE.jpg)
+
+>>>>>>> 9410bdf206350106b727353844ff786930853fb8
 
 The idea is to use the custom made app on the phone for filtering and visualizing the boulder problems together with its unique ID. The ID (which has been added to each single problem in order to make them easy to search) is then used by the user as an input for the keypad mounted on the STM mirocontroller. Thanks to this ID, the mircocontroller is able to find the correct boulder problem and later light correctly the holds used by it. 
 
