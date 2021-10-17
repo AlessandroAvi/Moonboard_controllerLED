@@ -30,7 +30,6 @@
 #include "stdbool.h"
 #include "keypad.h"
 #include "LED.h"
-//#include "createProblem.h"
 
 /* USER CODE END Includes */
 
@@ -74,7 +73,15 @@ void SystemClock_Config(void);
 
 // When DMA finishes a send triggers a flag and stops the data transfer
 void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim){
-	HAL_TIM_PWM_Stop_DMA(&htim2, TIM_CHANNEL_1);
+
+	if(htim == &htim2){
+		HAL_TIM_PWM_Stop_DMA(&htim2, TIM_CHANNEL_1);
+	}
+
+	if(htim == &htim3){
+		HAL_TIM_PWM_Stop_DMA(&htim3, TIM_CHANNEL_1);
+	}
+
 	datasentflag = 1;
 }
 
@@ -114,25 +121,45 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM2_Init();
   MX_I2C1_Init();
+  MX_TIM3_Init();
+  MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
 
-
-  // turn on LED if LCD screen is properly connected to i2c
+  // *********************************************
+  // 			LCD initialization
+  // *********************************************
   if(lcd16x2_i2c_init(&hi2c1)){
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
   }
   lcd16x2_i2c_clear();
   lcd16x2_i2c_2ndLine();
   lcd16x2_i2c_clear();
+  lcd16x2_i2c_printf("      RESET       ");
 
-  lcd16x2_i2c_printf("><>   FISH.  <><");
+  HAL_Delay(1000);
+
+  // Enable HC 05 module
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
+
+  // enable interrupt for the UART
+  __HAL_UART_ENABLE_IT(&huart6, UART_IT_RXNE);
+
+  lcd16x2_i2c_clear();
+  lcd16x2_i2c_2ndLine();
+  lcd16x2_i2c_clear();
+
+  lcd16x2_i2c_printf("><>   FISH   <><");
   lcd16x2_i2c_2ndLine();
   lcd16x2_i2c_printf("===   BOARD  ===");
 
-  int i=0;
-  // Definition of data
-  struct Problem p;			// struct that contains the info related to the problem
+
+  // *********************************************
+  // 			Data definition
+  // *********************************************
+  Problem p;			    // struct that contains the info related to the problem
   uint32_t problemID = 0;	// ID that reppresents the number of the problem
+
+  passProlemPtr(&p);
 
   /* USER CODE END 2 */
 
@@ -142,41 +169,63 @@ int main(void)
   {
 
 	  if(BLUE_BUTTON){
-		  //lcd16x2_i2c_clear();
+		  lcd16x2_i2c_clear();	// clear the LCD display
+
+		  // Listen for the key pressed on the keypad
+		  problemID = keypad_getNumber();
+
+		  if(problemID==10000){
+			  uint8_t mode=0;
+
+			  while(1){
+
+				  if(mode==0){
+					  lcd16x2_i2c_clear();
+					  lcd16x2_i2c_printf("DISCO MODE");
+					  lcd16x2_i2c_2ndLine();
+					  lcd16x2_i2c_printf("    /(^-^)/ ");
+					  mode +=1;
+				  }else if(mode==2){
+					  lcd16x2_i2c_clear();
+					  lcd16x2_i2c_printf("DISCO MODE");
+					  lcd16x2_i2c_2ndLine();
+					  lcd16x2_i2c_printf("    -(^-^)-  ");
+					  mode +=1;
+				  }else{
+					  mode +=1;
+					  if(mode==4) mode=0;
+				  }
+				  LED_randSetRand();
+
+				  // Sends to LED strip signal
+				  WS2811_Send();
+
+				  HAL_Delay(250);
+			  }
 
 
-
-		  //problemID = keypad_getNumber();
-
-
-		  //problem_fetch(&p,problemID);
-
-		  //problem_genArray(&p, problemID);
+		  }else{
 
 
-		  //lcd16x2_i2c_clear();
-		  //lcd16x2_i2c_printf("Name:");
-		  //lcd16x2_i2c_printf(p.name);
-		  //lcd16x2_i2c_2ndLine();
-		  //lcd16x2_i2c_printf("Grad:");
-		  //lcd16x2_i2c_printf(p.grade);
+			  // Search and update the struct depending on the ID obtained
+			  problem_fetch(&p,problemID);
+			  // Generate a matrix containing colors for each LED according to problem
+			  problem_genArray(&p);
 
+			  // Display on led boulder info
+			  lcd16x2_i2c_clear();
+			  lcd16x2_i2c_printf("Name:");
+			  lcd16x2_i2c_printf(p.name);
+			  lcd16x2_i2c_2ndLine();
+			  lcd16x2_i2c_printf("Grad:");
+			  lcd16x2_i2c_printf(p.grade);
 
-		  LED_setAllWhite();
+			  // Sends to LED strip signal
+			  WS2811_Send();
 
-		  //LED_setAllBlack();
-		  //LED_setColor(i, 255, 255, 255);
-		  i++;
-
-		  WS2811_Send();
-
-		  HAL_Delay(50);
-
-		  if(i==200){
-			  BLUE_BUTTON=false;
+			  // Reset button state
+			  BLUE_BUTTON = false;
 		  }
-
-		  //BLUE_BUTTON = false;
 
 	  }
 

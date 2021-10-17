@@ -198,6 +198,8 @@ uint32_t keypad_getNumber(){
 	PRINTF("\n\r The digits selected are: ");
 #endif
 
+	lcd16x2_i2c_printf("-> A to select");
+	lcd16x2_i2c_2ndLine();
 	lcd16x2_i2c_printf("ID:  ");
 	// until I press the ENTER button do:
 	while(true){
@@ -206,48 +208,26 @@ uint32_t keypad_getNumber(){
 
 		if(key==99){
 			lcd16x2_i2c_printf("Error...");
-#ifdef debug_output
-			PRINTF("\n\r     Something went wrong");
-#endif
 		}else if(key==10){			// A, exit insertion number
 			lcd16x2_i2c_printf(";");
-#ifdef debug_output
-			PRINTF("A-->end input mode");
-#endif
 			break;
 		}else if(key==20){		// B, nothing
 			lcd16x2_i2c_printf("B");
-#ifdef debug_output
-			PRINTF("B");
-#endif
-		}else if(key==30){		// C, nothing
+		}else if(key==30){		// C, easter egg
 			lcd16x2_i2c_printf("C");
-#ifdef debug_output
-			PRINTF("C ");
-#endif
+			return 0;
 		}else if(key==40){		// *, nothing
 			lcd16x2_i2c_printf("*");
-#ifdef debug_output
 			PRINTF("* ");
-#endif
 		}else if(key==50){		// #, nothing
 			lcd16x2_i2c_printf("#");
-#ifdef debug_output
 			PRINTF("# ");
-#endif
-		}else if(key==60){		// D, delete last digit
-			i=-1;
-			inputDigit[i] = 0;
-			lcd16x2_i2c_printf("del");
-#ifdef debug_output
-			PRINTF("DEL");
-#endif
+		}else if(key==60){		// D, disco mode
+			lcd16x2_i2c_printf("D");
+			return 10000;
 		}else if(key>=0 && key<=9){	// number keys
 			inputDigit[i] = key;
 			lcd16x2_i2c_printf("%d", inputDigit[i]);
-#ifdef debug_output
-			PRINTF8("%d ", inputDigit[i]);
-#endif
 			i+=1;
 		}
 

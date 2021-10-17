@@ -2,13 +2,13 @@
 #include <string.h>
 
 
-typedef struct Problem{
+typedef struct{
     int moveSize;
-    char* moveNumbers[15];
-    char* moveLetters[15];
-    char* name[20];
-    char* grade[3];
-    char* startFinish[15];
-};
+    char moveNumbers[160];
+    char moveLetters[160];
+    char name[100];
+    char grade[4];
+    char startFinish[160];
+}Problem;
 
-void problem_fetch(struct Problem *p, int id);
+void problem_fetch(Problem *p, int id);
