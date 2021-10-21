@@ -39,7 +39,9 @@ More detailed explanation of the code developed is in the `README` in the `STM_M
 - feature on the app search by name
 - bluetooth connection between phone-STM in order to avoid to use keypad and avoid storing all the problems in the STM (done - have to debug)
 
+## PHOTOS OF THE CONTROLLER
 
+![name-of-you-image](https://github.com/AlessandroAvi/Moonboard_LED_DIY/blob/main/Img/SCHEMATIC.png) 
 
 ## PHOTOS OF THE BOARD
 
