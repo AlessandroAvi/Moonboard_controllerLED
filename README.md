@@ -43,7 +43,7 @@ More detailed explanation of the code developed is in the `README` in the `STM_M
 
 ![name-of-you-image](https://github.com/AlessandroAvi/Moonboard_LED_DIY/blob/main/Img/SCHEMATIC.png) 
 
-![name-of-you-image](https://github.com/AlessandroAvi/Moonboard_LED_DIY/blob/main/Img/Assembly.jpg) 
+![name-of-you-image](https://github.com/AlessandroAvi/Moonboard_LED_DIY/blob/main/Img/Assembly.png) 
 
 | DEVICE PIN        | STM32 PIN | DEVICE PIN       | STM32 PIN       |
 | ----------------- | --------- | ---------------- | --------------- |
@@ -65,4 +65,4 @@ The case for the STM32 with the LCD screen, keypad and bluetooth module has been
 
 ## PHOTOS OF THE BOARD
 
-![name-of-you-image](https://github.com/AlessandroAvi/Moonboard_LED_DIY/blob/main/Img/boardAll.jpg) 
+![name-of-you-image](https://github.com/AlessandroAvi/Moonboard_LED_DIY/blob/main/Img/boardAll.png) 
