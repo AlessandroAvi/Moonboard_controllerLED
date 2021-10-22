@@ -43,31 +43,23 @@ More detailed explanation of the code developed is in the `README` in the `STM_M
 
 ![name-of-you-image](https://github.com/AlessandroAvi/Moonboard_LED_DIY/blob/main/Img/SCHEMATIC.png) 
 
-| DEVICE PIN        | STM32 PIN       |
-| ----------------- | --------------- |
-| Keypad - row 1    | C7              |
-| Keypad - row 2    | A9              |
-| Keypad - row 3    | A8              |
-| Keypad - row 4    | B10             |
-| Keypad - column 1 | B4              |
-| Keypad - column 2 | B5              |
-| Keypad - column 3 | B3              |
-| Keypad - column 4 | A10             |
-| HC-05 - VDD       | 5V              |
-| HC-05 - GND       | GND             |
-| HC-05 - TDX       | C6              |
-| HC-05 - RDX       | A12             |
-| HC-05 - Reset     | B9              |
-| LCD - VDD         | 5V              |
-| LCD - GND         | GND             |
-| LCD - SDA         | B7              |
-| LCD - SCL         | B6              |
-| LED line 1 - VDD  | Wall plug - 5V  |
-| LED line 1 - GND  | Wall plug - GND |
-| LED line 1 - PWM  | A6              |
-| LED line 2 - VDD  | Wall plug - 5V  |
-| LED line 2 - GND  | Wall plug - GND |
-| LED line 2 - PWM  | A0              |
+![name-of-you-image](https://github.com/AlessandroAvi/Moonboard_LED_DIY/blob/main/Img/Assembly.jpg) 
+
+| DEVICE PIN        | STM32 PIN | DEVICE PIN       | STM32 PIN       |
+| ----------------- | --------- | ---------------- | --------------- |
+| Keypad - row 1    | C7        | LED line 1 - VDD | Wall plug - 5V  |
+| Keypad - row 2    | A9        | LED line 1 - GND | Wall plug - GND |
+| Keypad - row 3    | A8        | LED line 1 - PWM | A6              |
+| Keypad - row 4    | B10       | LED line 2 - VDD | Wall plug - 5V  |
+| Keypad - column 1 | B4        | LED line 2 - GND | Wall plug - GND |
+| Keypad - column 2 | B5        | LED line 2 - PWM | A0              |
+| Keypad - column 3 | B3        | LCD - VDD        | 5V              |
+| Keypad - column 4 | A10       | LCD - GND        | GND             |
+| HC-05 - VDD       | 5V        | LCD - SDA        | B7              |
+| HC-05 - GND       | GND       | LCD - SCL        | B6              |
+| HC-05 - TDX       | C6        |                  |                 |
+| HC-05 - RDX       | A12       |                  |                 |
+| HC-05 - Reset     | B9        |                  |                 |
 
 The case for the STM32 with the LCD screen, keypad and bluetooth module has been 3d printed. The STL file is contained in the directory 'STL'.
 
