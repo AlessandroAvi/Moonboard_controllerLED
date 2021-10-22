@@ -69,7 +69,7 @@ More detailed explanation of the code developed is in the `README` in the `STM_M
 | LED line 2 - GND  | Wall plug - GND |
 | LED line 2 - PWM  | A0              |
 
-
+The case for the STM32 with the LCD screen, keypad and bluetooth module has been 3d printed. The STL file is contained in the directory 'STL'.
 
 ## PHOTOS OF THE BOARD
 
