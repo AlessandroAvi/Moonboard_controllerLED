@@ -65,3 +65,20 @@ amazon link: [link](https://www.amazon.com/ICQUANZX-Interface-Backlight-Ar-duino
 library used: 
 
 In this developed code just a couple functions have been used for making the LCD work. In particular the init function, the write function and the reset (for deleting the last thing written). 
+
+
+
+## BLUETOOTH MODULE EXPLANATION
+
+model: hc-05
+
+amazon link: [link](https://www.amazon.com/HiLetgo-Wireless-Bluetooth-Transceiver-Arduino/dp/B071YJG8DR/ref=sr_1_2_sspa?dchild=1&keywords=hc+05&qid=1635588155&sr=8-2-spons&psc=1&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUEzTjQ3NVAwUVZWUE5RJmVuY3J5cHRlZElkPUEwNDU0MzQxM08xNE04NVJNTUlNUSZlbmNyeXB0ZWRBZElkPUEwNjgxMDUxMjlXTU9IMEJZTzMyUyZ3aWRnZXROYW1lPXNwX2F0ZiZhY3Rpb249Y2xpY2tSZWRpcmVjdCZkb05vdExvZ0NsaWNrPXRydWU=)
+
+video tutorial used: [link](https://www.youtube.com/watch?v=TtpLcsQ4nMw&t=0s)
+
+The code developed for this module is inside the interrupt file stm32f4xx_it.c 
+
+The code is very short and quite easy to implement/understand. After connecting correctly the device to the microcontroller (gnd, vdd, uart connection rx and tx and reset button) the code is only inside the interrupt call. At the beginning of the code the pin connected to the Reset line of the device is raised high in order to enable the bluetooth receiver. After that the device is already ready to be used.
+
+By enabling the uart interrupt, the stm will enter in the interrupt function every tike the bluetooth device receives some data. Bywritin in the function the line `HAL_UART_Receive(&huart6, (uint8_t*)&buffer[buffer_index++], 1, 5)` the STM will automatically read one single character from the uart connected to the hc module. This means that every time that a new character isa vailable on the uart connection it will be read and stored inside the `buffer`. By exploiting the line below the reading function I am able to call the message handler every time the character read is a `\n`, which means new line.  Thanks to this I am able to loop over a nwe message coming from the hc-05 device, store it inside a buffer and when I detect that the emssage is finished the code will enter in the MessageHandler function that will store correctly the messag received (name, grade, holdss, ...).
+
