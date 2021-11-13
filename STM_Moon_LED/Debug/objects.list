@@ -5,6 +5,7 @@
 "Core/Src/gpio.o"
 "Core/Src/i2c.o"
 "Core/Src/keypad.o"
+"Core/Src/lcd16x2_i2c.o"
 "Core/Src/main.o"
 "Core/Src/stm32f4xx_hal_msp.o"
 "Core/Src/stm32f4xx_it.o"

@@ -4,30 +4,45 @@
 #include <stdio.h>
 #include <ctype.h>
 #include "debug.h"
+#include "lcd16x2_i2c.h"
+#include <stdlib.h>
 
+
+// PWM arrays that contain the duty cycles for the PWM
 uint32_t pwmData_low[24*100+80];
 uint32_t pwmData_high[24*100+80];
+int datasentflag = 0;				// Flag that knows if the PWM duty cycles have been sent
 
-uint8_t LED_Data[MAX_LED][4];
-int datasentflag = 0;
+uint8_t LED_Data[MAX_LED][4];		// Array that contains the colors for each single led
 
-
-char buffer[50];
-char name[50];
-char grade[5];
-char letter_move[50];
-char number_move[50];
-char isTop[50];
-char nMoves[1];
-uint8_t buffer_index=0;
-uint8_t timer_count =0;
+Problem * problem_Struc;
 
 int msgLen = 0;
 char msgDebug[128];
 
-uint8_t name_flag=0, nMove_flag=0, grade_flag=0, move_flag=0, isTop_flag=0, num_move_flag=0, let_move_flag=0;
 
-Problem * problem_Struc;
+// Bluetooth definitions
+
+char id_buffer[1];
+
+char buffer[50];
+
+char nMoves_buffer[1];
+
+uint8_t buffer_index=0;
+
+uint8_t READ_ID = 1;
+
+uint8_t blt_rx[6] = {0,0,0,0,0,0};
+
+char name_buff[50];
+char grade_buff[50];
+char moveLetter_buff[50];
+char moveNumber_buff[50];
+char startFinish_buff[50];
+char nHolds_buff[50];
+
+
 
 
 // *******************************************************************
@@ -132,7 +147,7 @@ uint8_t convert_digit(char dig1, char dig2){
 	return res;
 }
 
-void problem_genArray(Problem *p){
+void problem_genArray(Problem * p){
 
 	uint16_t LedPos = 0;
 	char     lettArr[p->moveSize];
@@ -140,7 +155,6 @@ void problem_genArray(Problem *p){
 	uint8_t  typeArr[p->moveSize];
 
 	uint8_t number_iter=0;
-
 
 	LED_setAllBlack();	// put to 0 all the colors for each LED
 
@@ -336,126 +350,51 @@ void WS2811_Send(void){
 
 
 
-// BLUETOOTH
+// *******************************************************************
+// 						BLUETOOTH RECEIVER
+// *******************************************************************
 
-void MessageHandler(){
+void MessageHandler(Problem * p){
 
-	msgLen = sprintf(msgDebug, buffer);
+	char tmp_buff[50];
+	int size_buff = 0;
 
-
-	if(name_flag == 0){					// receive NAME
-
-		msgLen=sprintf(name, buffer);
-		name_flag=1;
-		strcpy(problem_Struc->name,buffer);
-
-	}else if(grade_flag==0 && name_flag==1){	// receive GRADE
-
-		msgLen=sprintf(grade, buffer);
-		grade_flag=1;
-		strcpy(problem_Struc->grade,buffer);
-
-	}else if(nMove_flag==0 && grade_flag==1){	// receive N MOVES
-
-			msgLen=sprintf(nMoves, buffer);
-			nMove_flag=1;
-			if(msgLen==2){
-				problem_Struc->moveSize = convert_digit(nMoves[0], nMoves[1]);
-			}else{
-				problem_Struc->moveSize = convert_digit('0', nMoves[0]);
-			}
-
-	}else if(let_move_flag==0 && nMove_flag==1){	// receive LETTER MOVES
-
-		msgLen=sprintf(letter_move, buffer);
-		let_move_flag=1;
-		strcpy(problem_Struc->moveLetters,buffer);
-
-	}else if(num_move_flag==0 && let_move_flag==1){		// receive NUMBER MOVES
-
-		msgLen=sprintf(number_move, buffer);
-		num_move_flag=1;
-		strcpy(problem_Struc->moveNumbers,buffer);
-
-	}else if(isTop_flag==0 && num_move_flag==1){		// receive START FINISH
-
-		msgLen=sprintf(isTop, buffer);
-		isTop_flag=1;
-		strcpy(problem_Struc->startFinish,buffer);
-
+	// Move to the left of 3 steps the name
+	size_buff = convert_digit(name_buff[1], name_buff[2]);
+	memset(p->name, ' ', size_buff);									// reset string with spaces
+	for(int i=0; i<size_buff; i++){
+		p->name[i] = name_buff[i+3];
 	}
 
-	if(name_flag==1 && grade_flag==1 && nMove_flag==1 && let_move_flag==1 && num_move_flag==1 && isTop_flag==1){
-		BluetoothReceived();
+
+	// Move to the left of 3 steps the grade
+	size_buff = convert_digit(grade_buff[1], grade_buff[2]);
+	memset(p->grade, ' ', size_buff);									// reset string with spaces
+	for(int i=0; i<size_buff; i++){
+		p->grade[i] = grade_buff[i+3];
+	}
+	strcpy(p->grade, tmp_buff);
+
+
+	p->moveSize = convert_digit(nHolds_buff[1], nHolds_buff[2]);
+
+
+	memset(p->moveNumbers, ' ', p->moveSize*2);							// temporary save
+	for(int i=0; i<p->moveSize*2; i++){
+		p->moveNumbers[i] = moveNumber_buff[i+1];
 	}
 
-	//HAL_UART_Transmit(&huart2, (uint8_t*)msgDebug, msgLen, 10);
+	memset(p->moveLetters, ' ', p->moveSize*2);	// reset string with spaces
+	for(int i=0; i<p->moveSize*2; i++){
+		p->moveLetters[i] = moveLetter_buff[i+1];
+	}
 
-	memset(buffer, 0, sizeof(buffer));
-	buffer_index = 0;
-	timer_count=0;
-}
+	memset(p->startFinish, ',', p->moveSize*2);	// reset string with spaces
+	for(int i=0; i<p->moveSize*2; i++){
+		p->startFinish[i] = startFinish_buff[i+1];
+	}
 
-
-
-void BluetoothReceived(){
-	name_flag=0;
-	grade_flag=0;
-	move_flag=0;
-	isTop_flag=0;
-
-	msgLen = sprintf(msgDebug, "\n\r");
-	HAL_UART_Transmit(&huart2, (uint8_t*)msgDebug, msgLen, 10);
-
-	msgLen = sprintf(msgDebug, name);
-	HAL_UART_Transmit(&huart2, (uint8_t*)msgDebug, msgLen, 10);
-
-	msgLen = sprintf(msgDebug, "\n\r");
-	HAL_UART_Transmit(&huart2, (uint8_t*)msgDebug, msgLen, 10);
-
-	msgLen = sprintf(msgDebug, grade);
-	HAL_UART_Transmit(&huart2, (uint8_t*)msgDebug, msgLen, 10);
-
-	msgLen = sprintf(msgDebug, "\n\r");
-	HAL_UART_Transmit(&huart2, (uint8_t*)msgDebug, msgLen, 10);
-
-	msgLen = sprintf(msgDebug, letter_move);
-	HAL_UART_Transmit(&huart2, (uint8_t*)msgDebug, msgLen, 10);
-
-	msgLen = sprintf(msgDebug, "\n\r");
-	HAL_UART_Transmit(&huart2, (uint8_t*)msgDebug, msgLen, 10);
-
-	msgLen = sprintf(msgDebug, number_move);
-	HAL_UART_Transmit(&huart2, (uint8_t*)msgDebug, msgLen, 10);
-
-	msgLen = sprintf(msgDebug, "\n\r");
-	HAL_UART_Transmit(&huart2, (uint8_t*)msgDebug, msgLen, 10);
-
-	msgLen = sprintf(msgDebug, isTop);
-	HAL_UART_Transmit(&huart2, (uint8_t*)msgDebug, msgLen, 10);
-
-	problem_genArray(problem_Struc);
-
-	msgLen = sprintf(msgDebug, "\n\rFINITO2");
-	HAL_UART_Transmit(&huart2, (uint8_t*)msgDebug, msgLen, 10);
-
-	WS2811_Send();
-
-	msgLen = sprintf(msgDebug, "\n\rFINITO3");
-	HAL_UART_Transmit(&huart2, (uint8_t*)msgDebug, msgLen, 10);
-
-	// Display on led boulder info
-	lcd16x2_i2c_clear();	// clear the LCD display
-	lcd16x2_i2c_clear();
-	lcd16x2_i2c_printf("Name:");
-	lcd16x2_i2c_printf(problem_Struc->name);
-	lcd16x2_i2c_2ndLine();
-	lcd16x2_i2c_printf("Grad:");
-	lcd16x2_i2c_printf(problem_Struc->grade);
 
 }
 
-void passProlemPtr(Problem * ptr){
 
-	problem_Struc = ptr;
-}

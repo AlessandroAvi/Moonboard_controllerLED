@@ -44,3 +44,5 @@ void PRINTFchar(char str[50], char lettere[20]){
 	  msg_len = sprintf(msg, str,lettere);
 	  HAL_UART_Transmit(&huart2, (uint8_t *)msg, msg_len, 5000);
 }
+
+

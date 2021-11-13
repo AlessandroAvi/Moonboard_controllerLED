@@ -30,6 +30,8 @@
 #include "stdbool.h"
 #include "keypad.h"
 #include "LED.h"
+#include "lcd16x2_i2c.h"
+
 
 /* USER CODE END Includes */
 
@@ -138,28 +140,26 @@ int main(void)
 
   HAL_Delay(1000);
 
-  // Enable HC 05 module
+  // Enable HC 05 bluetooth module
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
 
   // enable interrupt for the UART
-  __HAL_UART_ENABLE_IT(&huart6, UART_IT_RXNE);
+  //__HAL_UART_ENABLE_IT(&huart6, UART_IT_RXNE);
+  HAL_UART_Receive_IT(&huart6, buffer, 50);
 
+
+  // Welcome message
   lcd16x2_i2c_clear();
   lcd16x2_i2c_2ndLine();
   lcd16x2_i2c_clear();
-
   lcd16x2_i2c_printf("><>   FISH   <><");
   lcd16x2_i2c_2ndLine();
   lcd16x2_i2c_printf("===   BOARD  ===");
 
 
-  // *********************************************
-  // 			Data definition
-  // *********************************************
-  Problem p;			    // struct that contains the info related to the problem
-  uint32_t problemID = 0;	// ID that reppresents the number of the problem
-
-  passProlemPtr(&p);
+  // Struct definition
+  Problem p;			    			// struct that contains the info related to the problem
+  uint32_t problemID = 0;				// ID that reppresents the number of the problem
 
   /* USER CODE END 2 */
 
@@ -168,13 +168,13 @@ int main(void)
   while (1)
   {
 
+	  // If the blue button is pressed
 	  if(BLUE_BUTTON){
-		  lcd16x2_i2c_clear();	// clear the LCD display
+		  lcd16x2_i2c_clear();					// clear the LCD display
 
-		  // Listen for the key pressed on the keypad
-		  problemID = keypad_getNumber();
+		  problemID = keypad_getNumber();		// Listen for the key pressed on the keypad
 
-		  if(problemID==10000){
+		  if(problemID==10000){					// If pressed button is disco mode
 			  uint8_t mode=0;
 
 			  while(1){
@@ -204,13 +204,12 @@ int main(void)
 			  }
 
 
-		  }else{
+		  }else{								// Otherwise search correct problem
 
 
-			  // Search and update the struct depending on the ID obtained
-			  problem_fetch(&p,problemID);
-			  // Generate a matrix containing colors for each LED according to problem
-			  problem_genArray(&p);
+			  problem_fetch(&p,problemID);		// Update the struct with teh info from the ID
+
+			  problem_genArray(&p);				// Generate a matrix containing colors for each LED according to problem
 
 			  // Display on led boulder info
 			  lcd16x2_i2c_clear();
@@ -220,14 +219,43 @@ int main(void)
 			  lcd16x2_i2c_printf("Grad:");
 			  lcd16x2_i2c_printf(p.grade);
 
-			  // Sends to LED strip signal
-			  WS2811_Send();
+			  WS2811_Send();					// Sends to LED strip signal
 
-			  // Reset button state
-			  BLUE_BUTTON = false;
+			  BLUE_BUTTON = false;				// Reset blue button flag
 		  }
-
 	  }
+
+
+		// If the message is received from bluetooth
+	 if(blt_rx[0] && blt_rx[1] && blt_rx[2] && blt_rx[3] && blt_rx[4] && blt_rx[5]){
+
+		MessageHandler(&p);
+
+		problem_genArray(&p);				// Generate matrix of color values from problem
+
+		//WS2811_Send();					// Send PWM to LEDs
+
+		// Display on led boulder info
+		lcd16x2_i2c_clear();
+		lcd16x2_i2c_2ndLine();
+		lcd16x2_i2c_clear();
+		lcd16x2_i2c_printf("Name:");
+		lcd16x2_i2c_printf(p.name);
+		lcd16x2_i2c_2ndLine();
+		lcd16x2_i2c_printf("Grad:");
+		lcd16x2_i2c_printf(p.grade);
+
+		msgLen = sprintf(msgDebug, "\n\rInfo sent to LCD");
+		HAL_UART_Transmit(&huart2, (uint8_t*)msgDebug, msgLen, 10);
+
+		blt_rx[0] = 0;
+		blt_rx[1] = 0;
+		blt_rx[2] = 0;
+		blt_rx[3] = 0;
+		blt_rx[4] = 0;
+		blt_rx[5] = 0;
+	 }
+
 
 
 
@@ -290,6 +318,36 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 		BLUE_BUTTON = true;
 	}
 }
+
+
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef * huart){
+
+	if(huart==&huart6){
+
+		if(buffer[0] == '1'){								// receive NAME
+			strcpy(name_buff,buffer);
+			blt_rx[0] = 1;
+		}else if(buffer[0] == '2'){							// receive GRADE
+			strcpy(grade_buff,buffer);
+			blt_rx[1] = 1;
+		}else if(buffer[0] == '3'){							// receive N MOVES
+			strcpy(nHolds_buff,buffer);
+			blt_rx[2] = 1;
+		}else if(id_buffer[0] == '4'){						// receive LETTER MOVES
+			strcpy(moveLetter_buff,buffer);
+			blt_rx[3] = 1;
+		}else if(id_buffer[0] == '5'){						// receive NUMBER MOVES
+			strcpy(moveNumber_buff,buffer);
+			blt_rx[4] = 1;
+		}else if(id_buffer[0] == '6'){						// receive START FINISH
+			strcpy(startFinish_buff,buffer);
+			blt_rx[5] = 1;
+		}
+	}
+}
+
+
 /* USER CODE END 4 */
 
 /**

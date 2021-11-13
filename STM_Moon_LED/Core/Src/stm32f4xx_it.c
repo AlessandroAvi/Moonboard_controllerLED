@@ -265,14 +265,6 @@ void USART6_IRQHandler(void)
 {
   /* USER CODE BEGIN USART6_IRQn 0 */
 
-	// Receive one character at a time and save it insode the container buffer
-	HAL_UART_Receive(&huart6, (uint8_t*)&buffer[buffer_index++], 1, 5);
-
-	// If the buffer contains the \n character, save the message and begin again
-	if(buffer[buffer_index-1] == '\n'){
-		MessageHandler();
-	}
-
   /* USER CODE END USART6_IRQn 0 */
   HAL_UART_IRQHandler(&huart6);
   /* USER CODE BEGIN USART6_IRQn 1 */

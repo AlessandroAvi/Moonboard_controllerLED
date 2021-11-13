@@ -85,7 +85,7 @@ with open("filtered_problems.json", "w") as filtered_problems:
                     # writing on the txt file 
                     output.write(f'\t\tcase {problemId} :\n')
                     output.write('\t\t\tstrcpy(p->name,"' + name +'"); \n')
-                    output.write('\t\t\tstrcpy(p->name,"' + grade +'"); \n')
+                    output.write('\t\t\tstrcpy(p->grade,"' + grade +'"); \n')
                     output.write(f'\t\t\tp->moveSize = {len(moves)};\n' )
                     moveLetters = ""
                     moveNumbers = ""

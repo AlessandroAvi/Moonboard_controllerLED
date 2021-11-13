@@ -74,11 +74,14 @@ model: hc-05
 
 amazon link: [link](https://www.amazon.com/HiLetgo-Wireless-Bluetooth-Transceiver-Arduino/dp/B071YJG8DR/ref=sr_1_2_sspa?dchild=1&keywords=hc+05&qid=1635588155&sr=8-2-spons&psc=1&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUEzTjQ3NVAwUVZWUE5RJmVuY3J5cHRlZElkPUEwNDU0MzQxM08xNE04NVJNTUlNUSZlbmNyeXB0ZWRBZElkPUEwNjgxMDUxMjlXTU9IMEJZTzMyUyZ3aWRnZXROYW1lPXNwX2F0ZiZhY3Rpb249Y2xpY2tSZWRpcmVjdCZkb05vdExvZ0NsaWNrPXRydWU=)
 
-video tutorial used: [link](https://www.youtube.com/watch?v=TtpLcsQ4nMw&t=0s)
+video tutorial used: [link](https://www.youtube.com/watch?v=xE6GVt7XuJI)
 
-The code developed for this module is inside the interrupt file stm32f4xx_it.c 
+The code developed for this module is entirely inside the main.c and in the function MessageHandler inside `LED.c`
 
-The code is very short and quite easy to implement/understand. After connecting correctly the device to the microcontroller (gnd, vdd, uart connection rx and tx and reset button) the code is only inside the interrupt call. At the beginning of the code the pin connected to the Reset line of the device is raised high in order to enable the bluetooth receiver. After that the device is already ready to be used.
+The code is very short and quite easy to implement/understand. After connecting correctly the device to the microcontroller (gnd, vdd, uart connection rx and tx and reset button) the code is only inside the interrupt call at the bottom of the main. At the beginning of the code the pin connected to the Reset line of the device is raised high in order to enable the bluetooth receiver. After that the device is already ready to be used.
 
-By enabling the uart interrupt, the stm will enter in the interrupt function every tike the bluetooth device receives some data. Bywritin in the function the line `HAL_UART_Receive(&huart6, (uint8_t*)&buffer[buffer_index++], 1, 5)` the STM will automatically read one single character from the uart connected to the hc module. This means that every time that a new character isa vailable on the uart connection it will be read and stored inside the `buffer`. By exploiting the line below the reading function I am able to call the message handler every time the character read is a `\n`, which means new line.  Thanks to this I am able to loop over a nwe message coming from the hc-05 device, store it inside a buffer and when I detect that the emssage is finished the code will enter in the MessageHandler function that will store correctly the messag received (name, grade, holdss, ...).
+The only lines of code that are requried for the bluetooth communication are the function `HAL_UART_Receive_IT(&huart6, rx, 50)`, which is at the beginning of the `USER CODE 2`, and the other important function is the interrupt callback function, `HAL_UART_RxCpltCallback()` which is positioned at the bottom of the code in the secion `USER CODE 4`. 
 
+The idea is that the anroid device sends multiple strings long 50 chars. Each single string contains the informations related to the problem (name, grade, number of holds, letter and digit tha reppresent the hold, type of hold). This methos uses srtings that are always long 50 chars, this because is easier to use UART interrupts with constant lengths of messages. 
+
+Each time a new string is read from the UART, also its type is recorded. The first char of the string reppresents the information that is stored inside, and depending on the first character the string in copieed in different buffers. These info are then manipulated and put insied the struct that contains the info of the current boulder problem.

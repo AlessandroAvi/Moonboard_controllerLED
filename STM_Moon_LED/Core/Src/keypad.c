@@ -13,9 +13,6 @@
 #include "lcd16x2_i2c.h"
 #include "i2c.h"
 
-// ########################################################################
-// 								VERSION 2
-// ########################################################################
 
 // ### Keypad layout
 // 1  2  3  A
@@ -190,9 +187,6 @@ uint32_t keypad_getNumber(){
 	uint32_t number=0;
 	uint8_t key;
 	uint8_t i=0;
-
-	char msg[100];
-	int msg_len;
 
 #ifdef debug_output
 	PRINTF("\n\r The digits selected are: ");
