@@ -1,6 +1,11 @@
 # IDEA FOR MOONBOARD LED PROJECT
 
-This repository contains the code used for simulating the moonboard LED kit. The hardware used is:
+This repository contains the code that I developed for creating a LED moonboard controller. The project is applied on a STM32 microcontroller and it work together with other repositories that I developed. These are:
+
+- [Android app](https://github.com/AlessandroAvi/Moonboard_Android_App) that can be used to filter the moonboard problems (dataset created from this repo), visualize them on the screen and later send the most relevant information via bluetooth to the STM32 microcontroller
+- [Python code](https://github.com/AlessandroAvi/Moonboard_Dataset) that I developed for generating the moonboard boulder problems dataset. This uses some computer vision and automatic scrolling throught the problems (on an android simulator installed on the pc) in order to create a json that contains all the info of the boulder problems (because the original dataset is private)
+
+The necessary ahrdware for this part of the prohject applied on the STM32 microcontroller is:
 
 - Microcontroller [STM32 F401RE](https://www.amazon.com/NUCLEO-F401RE-Nucleo-64-Development-STM32F401RE-connectivity/dp/B07JYBPWN4) 
 - arduino [keypad ](https://www.amazon.com/Matrix-Membrane-Switch-Keyboard-Arduino/dp/B07THCLGCZ/ref=sr_1_3?dchild=1&keywords=arduino+keypad&qid=1620202495&sr=8-3) 4x4
@@ -10,9 +15,7 @@ This repository contains the code used for simulating the moonboard LED kit. The
 
  ![name-of-you-image](https://github.com/AlessandroAvi/Moonboard_LED_DIY/blob/main/Img/material.png) 
 
-This project is based on a custom made android app used for filtering and visualizing boulder problems. 
-
-**IDEA**: Use the custom made app on the phone in order to filter and select the boulder problem. Once the problem has been selected the app shows an ID that will be used on the keypad in order to light the correct LED for the holds. The purpose of the LCD is just for understanding if the problem selected on the STM is correct (name and grade).
+**IDEA**: Use the custom made app on the phone in order to filter and select the boulder problem. Once the problem has been selected the app shows an ID that will be used on the keypad in order to light the correct LED for the holds. The purpose of the LCD is just for understanding if the problem selected on the STM is correct (name and grade). Another option is to use the "bluetooth send" button i  the app, that will send all the relevant information to the STM32 via bluetooth, wich will then control the LEDs and light up the boulder problem.
 
 
 
@@ -35,7 +38,6 @@ More detailed explanation of the code developed is in the `README` in the `STM_M
 
 ## TO DO
 
-- python script that generates a new JSON file for all the boulder problems (wip - already working, need to be refined)
 - feature on the app search by name
 - bluetooth connection between phone-STM in order to avoid to use keypad and avoid storing all the problems in the STM (done - have to debug)
 
