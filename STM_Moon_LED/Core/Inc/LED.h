@@ -61,23 +61,14 @@ void WS2811_Send(void);
 // *****************************
 // BLUETOOTH CODE
 
-extern uint8_t READ_ID;				// Flag used in the bluetooth communication (reads the type of info contained in the msg)
-
-extern uint8_t buffer_index;	// Index for iterating over the receive message
-
-extern uint8_t blt_rx[6];		// Flags that leep track fo what has been received
-
-extern char id_buffer[1];	// Buffer that holds the type of the info
-extern char buffer[50];			// Buffer that holds the info sent from android app
 
 
 
-char name_buff[50];
-char grade_buff[50];
-char moveLetter_buff[50];
-char moveNumber_buff[50];
-char startFinish_buff[50];
-char nHolds_buff[50];
+extern char buffer[600];			// Buffer that holds the info sent from android app
+
+
+uint8_t BLUETOOTH_FLAG;
+uint8_t DISCO_FLAG;
 
 // Called once in a while in the interrupt handler, saves the message in the correct container
 void MessageHandler(Problem * p);

@@ -144,8 +144,7 @@ int main(void)
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
 
   // enable interrupt for the UART
-  //__HAL_UART_ENABLE_IT(&huart6, UART_IT_RXNE);
-  HAL_UART_Receive_IT(&huart6, buffer, 50);
+  HAL_UART_Receive_IT(&huart6, buffer, 600);
 
 
   // Welcome message
@@ -170,11 +169,11 @@ int main(void)
 
 	  // If the blue button is pressed
 	  if(BLUE_BUTTON){
-		  lcd16x2_i2c_clear();					// clear the LCD display
+		  lcd16x2_i2c_clear();							// clear the LCD display
 
-		  problemID = keypad_getNumber();		// Listen for the key pressed on the keypad
+		  problemID = keypad_getNumber();				// Listen for the key pressed on the keypad
 
-		  if(problemID==10000){					// If pressed button is disco mode
+		  if(problemID==10000 || DISCO_FLAG==1){		// If pressed button is disco mode
 			  uint8_t mode=0;
 
 			  while(1){
@@ -195,7 +194,7 @@ int main(void)
 					  mode +=1;
 					  if(mode==4) mode=0;
 				  }
-				  LED_randSetRand();
+				  LED_setAllRand();
 
 				  // Sends to LED strip signal
 				  WS2811_Send();
@@ -227,13 +226,18 @@ int main(void)
 
 
 		// If the message is received from bluetooth
-	 if(blt_rx[0] && blt_rx[1] && blt_rx[2] && blt_rx[3] && blt_rx[4] && blt_rx[5]){
+	 if(BLUETOOTH_FLAG==1){
 
-		MessageHandler(&p);
+		 if(buffer[0]=='D' && buffer[1]=='I' && buffer[2]=='S' && buffer[3]=='C' && buffer[4]=='O'){
+			 DISCO_FLAG = 1;
+			 continue;
+		 }
+
+		MessageHandler(&p);					// Save in the struct the correct values from the string received
 
 		problem_genArray(&p);				// Generate matrix of color values from problem
 
-		//WS2811_Send();					// Send PWM to LEDs
+		WS2811_Send();						// Send PWM to LEDs
 
 		// Display on led boulder info
 		lcd16x2_i2c_clear();
@@ -245,15 +249,7 @@ int main(void)
 		lcd16x2_i2c_printf("Grad:");
 		lcd16x2_i2c_printf(p.grade);
 
-		msgLen = sprintf(msgDebug, "\n\rInfo sent to LCD");
-		HAL_UART_Transmit(&huart2, (uint8_t*)msgDebug, msgLen, 10);
-
-		blt_rx[0] = 0;
-		blt_rx[1] = 0;
-		blt_rx[2] = 0;
-		blt_rx[3] = 0;
-		blt_rx[4] = 0;
-		blt_rx[5] = 0;
+		BLUETOOTH_FLAG=0;					// Reset bluetooth flag in order to receive again
 	 }
 
 
@@ -323,28 +319,11 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef * huart){
 
-	if(huart==&huart6){
-
-		if(buffer[0] == '1'){								// receive NAME
-			strcpy(name_buff,buffer);
-			blt_rx[0] = 1;
-		}else if(buffer[0] == '2'){							// receive GRADE
-			strcpy(grade_buff,buffer);
-			blt_rx[1] = 1;
-		}else if(buffer[0] == '3'){							// receive N MOVES
-			strcpy(nHolds_buff,buffer);
-			blt_rx[2] = 1;
-		}else if(id_buffer[0] == '4'){						// receive LETTER MOVES
-			strcpy(moveLetter_buff,buffer);
-			blt_rx[3] = 1;
-		}else if(id_buffer[0] == '5'){						// receive NUMBER MOVES
-			strcpy(moveNumber_buff,buffer);
-			blt_rx[4] = 1;
-		}else if(id_buffer[0] == '6'){						// receive START FINISH
-			strcpy(startFinish_buff,buffer);
-			blt_rx[5] = 1;
-		}
+	if(BLUETOOTH_FLAG == 0){
+		BLUETOOTH_FLAG = 1;
 	}
+
+
 }
 
 

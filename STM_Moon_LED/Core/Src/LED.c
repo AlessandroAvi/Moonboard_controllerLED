@@ -23,26 +23,13 @@ char msgDebug[128];
 
 // Bluetooth definitions
 
-char id_buffer[1];
+uint8_t BLUETOOTH_FLAG = 0;
 
-char buffer[50];
+uint8_t DISCO_FLAG = 0;
+
+char buffer[600];
 
 char nMoves_buffer[1];
-
-uint8_t buffer_index=0;
-
-uint8_t READ_ID = 1;
-
-uint8_t blt_rx[6] = {0,0,0,0,0,0};
-
-char name_buff[50];
-char grade_buff[50];
-char moveLetter_buff[50];
-char moveNumber_buff[50];
-char startFinish_buff[50];
-char nHolds_buff[50];
-
-
 
 
 // *******************************************************************
@@ -256,17 +243,12 @@ void LED_randSetRand(){
 
 	LED_setAllBlack();
 
-	int n1, n2;
-
 	for(int i=0; i<MAX_LED; i++){
-		n1 = rand();
-		n2 = rand();
 
-		if(n1 > n2){
-			LED_Data[i][1]=rand();
-			LED_Data[i][2]=rand();
-			LED_Data[i][3]=rand();
-		}
+		LED_Data[i][1]=rand();
+		LED_Data[i][2]=rand();
+		LED_Data[i][3]=rand();
+
 	}
 }
 
@@ -338,10 +320,8 @@ void WS2811_Send(void){
 	HAL_TIM_PWM_Start_DMA(&htim3, TIM_CHANNEL_1, (uint32_t *)pwmData_high, indx_high);
 
 
-	//while(!datasentflag){};
+	while(!datasentflag){};
 	datasentflag=0;
-
-	HAL_Delay(250);
 
 }
 
@@ -356,42 +336,42 @@ void WS2811_Send(void){
 
 void MessageHandler(Problem * p){
 
-	char tmp_buff[50];
-	int size_buff = 0;
-
-	// Move to the left of 3 steps the name
-	size_buff = convert_digit(name_buff[1], name_buff[2]);
-	memset(p->name, ' ', size_buff);									// reset string with spaces
-	for(int i=0; i<size_buff; i++){
-		p->name[i] = name_buff[i+3];
+	char spaces_msg[100];
+	for (int i=0; i<100; i++){
+		spaces_msg[i] = ' ';
 	}
 
-
-	// Move to the left of 3 steps the grade
-	size_buff = convert_digit(grade_buff[1], grade_buff[2]);
-	memset(p->grade, ' ', size_buff);									// reset string with spaces
-	for(int i=0; i<size_buff; i++){
-		p->grade[i] = grade_buff[i+3];
+	// NAME
+	strcpy(p->name,"           ");
+	for(int i=0; i<11; i++){
+		p->name[i] = buffer[i+2];
 	}
-	strcpy(p->grade, tmp_buff);
 
+	// GRADE
+	strcpy(p->grade, "          ");
+	for(int i=0; i<3; i++){
+		p->grade[i] = buffer[100+i];
+	}
 
-	p->moveSize = convert_digit(nHolds_buff[1], nHolds_buff[2]);
+	// N OF HOLDS
+	p->moveSize = buffer[200]*10+buffer[201];
 
-
-	memset(p->moveNumbers, ' ', p->moveSize*2);							// temporary save
+	// LETTERS OF EACH HOLD
+	strcpy(p->moveLetters, spaces_msg);
 	for(int i=0; i<p->moveSize*2; i++){
-		p->moveNumbers[i] = moveNumber_buff[i+1];
+		p->moveLetters[i] = buffer[300+i];
 	}
 
-	memset(p->moveLetters, ' ', p->moveSize*2);	// reset string with spaces
-	for(int i=0; i<p->moveSize*2; i++){
-		p->moveLetters[i] = moveLetter_buff[i+1];
+	// NUMBERS OF EACH HOLD
+	strcpy(p->moveNumbers, spaces_msg);
+	for(int i=0; i<100; i++){
+		p->moveNumbers[i] = buffer[400+i];
 	}
 
-	memset(p->startFinish, ',', p->moveSize*2);	// reset string with spaces
+	// TYPE OF EACH HOLD
+	strcpy(p->startFinish, spaces_msg);
 	for(int i=0; i<p->moveSize*2; i++){
-		p->startFinish[i] = startFinish_buff[i+1];
+		p->startFinish[i] = buffer[500+i];
 	}
 
 

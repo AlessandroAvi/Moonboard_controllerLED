@@ -7,7 +7,7 @@ typedef struct{
     char moveNumbers[160];
     char moveLetters[160];
     char name[100];
-    char grade[4];
+    char grade[11];
     char startFinish[160];
 }Problem;
 
