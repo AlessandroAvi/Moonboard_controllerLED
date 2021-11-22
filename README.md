@@ -5,7 +5,9 @@ This repository contains the code that I developed for creating a LED moonboard 
 - [Android app](https://github.com/AlessandroAvi/Moonboard_Android_App) that can be used to filter the moonboard problems (dataset created from this repo), visualize them on the screen and later send the most relevant information via bluetooth to the STM32 microcontroller
 - [Python code](https://github.com/AlessandroAvi/Moonboard_Dataset) that I developed for generating the moonboard boulder problems dataset. This uses some computer vision and automatic scrolling throught the problems (on an android simulator installed on the pc) in order to create a json that contains all the info of the boulder problems (because the original dataset is private)
 
-The necessary ahrdware for this part of the prohject applied on the STM32 microcontroller is:
+ ![name-of-you-image](https://github.com/AlessandroAvi/Moonboard_LED_DIY/blob/main/Img/intro.png) 
+
+The necessary hardware for this part of the prohject applied on the STM32 microcontroller is:
 
 - Microcontroller [STM32 F401RE](https://www.amazon.com/NUCLEO-F401RE-Nucleo-64-Development-STM32F401RE-connectivity/dp/B07JYBPWN4) 
 - arduino [keypad ](https://www.amazon.com/Matrix-Membrane-Switch-Keyboard-Arduino/dp/B07THCLGCZ/ref=sr_1_3?dchild=1&keywords=arduino+keypad&qid=1620202495&sr=8-3) 4x4
