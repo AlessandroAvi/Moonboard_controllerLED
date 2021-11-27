@@ -173,38 +173,11 @@ int main(void)
 
 		  problemID = keypad_getNumber();				// Listen for the key pressed on the keypad
 
-		  if(problemID==10000 || DISCO_FLAG==1){		// If pressed button is disco mode
-			  uint8_t mode=0;
+		  if(problemID==10000){		// If pressed button is disco mode
 
-			  while(1){
-
-				  if(mode==0){
-					  lcd16x2_i2c_clear();
-					  lcd16x2_i2c_printf("DISCO MODE");
-					  lcd16x2_i2c_2ndLine();
-					  lcd16x2_i2c_printf("    /(^-^)/ ");
-					  mode +=1;
-				  }else if(mode==2){
-					  lcd16x2_i2c_clear();
-					  lcd16x2_i2c_printf("DISCO MODE");
-					  lcd16x2_i2c_2ndLine();
-					  lcd16x2_i2c_printf("    -(^-^)-  ");
-					  mode +=1;
-				  }else{
-					  mode +=1;
-					  if(mode==4) mode=0;
-				  }
-				  LED_setAllRand();
-
-				  // Sends to LED strip signal
-				  WS2811_Send();
-
-				  HAL_Delay(250);
-			  }
-
+			  DISCO_FLAG = 1;
 
 		  }else{								// Otherwise search correct problem
-
 
 			  problem_fetch(&p,problemID);		// Update the struct with teh info from the ID
 
@@ -229,27 +202,32 @@ int main(void)
 	 if(BLUETOOTH_FLAG==1){
 
 		 if(buffer[0]=='D' && buffer[1]=='I' && buffer[2]=='S' && buffer[3]=='C' && buffer[4]=='O'){
-			 DISCO_FLAG = 1;
-			 continue;
+			 //DISCO_FLAG     = 1;
+			 //BLUETOOTH_FLAG = 0;
+		 }else{
+			 MessageHandler(&p);					// Save in the struct the correct values from the string received
+
+			 problem_genArray(&p);				// Generate matrix of color values from problem
+
+			 WS2811_Send();						// Send PWM to LEDs
+
+			 // Display on led boulder info
+			 lcd16x2_i2c_clear();
+			 lcd16x2_i2c_2ndLine();
+			 lcd16x2_i2c_clear();
+			 lcd16x2_i2c_printf("Name:");
+			 lcd16x2_i2c_printf(p.name);
+			 lcd16x2_i2c_2ndLine();
+			 lcd16x2_i2c_printf("Grad:");
+			 lcd16x2_i2c_printf(p.grade);
+
+			 BLUETOOTH_FLAG=0;					// Reset bluetooth flag in order to receive again
 		 }
+	 }
 
-		MessageHandler(&p);					// Save in the struct the correct values from the string received
 
-		problem_genArray(&p);				// Generate matrix of color values from problem
-
-		WS2811_Send();						// Send PWM to LEDs
-
-		// Display on led boulder info
-		lcd16x2_i2c_clear();
-		lcd16x2_i2c_2ndLine();
-		lcd16x2_i2c_clear();
-		lcd16x2_i2c_printf("Name:");
-		lcd16x2_i2c_printf(p.name);
-		lcd16x2_i2c_2ndLine();
-		lcd16x2_i2c_printf("Grad:");
-		lcd16x2_i2c_printf(p.grade);
-
-		BLUETOOTH_FLAG=0;					// Reset bluetooth flag in order to receive again
+	 if(DISCO_FLAG==1){
+		 //LED_discoMode();
 	 }
 
 
@@ -323,6 +301,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef * huart){
 		BLUETOOTH_FLAG = 1;
 	}
 
+	HAL_UART_Receive_IT(&huart6, buffer, 600);
 
 }
 

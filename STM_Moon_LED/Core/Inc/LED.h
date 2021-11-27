@@ -50,6 +50,10 @@ void LED_testHold(char letter, int number);
 void LED_randSetRand();
 
 
+// Sets random colors for disco mode and changes the LCD screen
+void LED_discoMode();
+
+
 // Generated the PWM signal and sends it to the LED strip
 void WS2811_Send(void);
 

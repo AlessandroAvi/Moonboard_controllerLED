@@ -253,7 +253,37 @@ void LED_randSetRand(){
 }
 
 
+/*
+void LED_discoMode(){
+	  uint8_t mode=0;
 
+	  while(1){
+
+		  if(mode==0){
+			  lcd16x2_i2c_clear();
+			  lcd16x2_i2c_printf("DISCO MODE");
+			  lcd16x2_i2c_2ndLine();
+			  lcd16x2_i2c_printf("    /(^-^)/ ");
+			  mode +=1;
+		  }else if(mode==2){
+			  lcd16x2_i2c_clear();
+			  lcd16x2_i2c_printf("DISCO MODE");
+			  lcd16x2_i2c_2ndLine();
+			  lcd16x2_i2c_printf("    -(^-^)-  ");
+			  mode +=1;
+		  }else{
+			  mode +=1;
+			  if(mode==4) mode=0;
+		  }
+		  LED_setAllRand();
+
+		  // Sends to LED strip signal
+		  WS2811_Send();
+
+		  HAL_Delay(250);
+	  }
+}
+*/
 
 // *******************************************************************
 // 						GENERATION OF PWM
