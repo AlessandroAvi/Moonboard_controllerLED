@@ -2,14 +2,14 @@
 
 This repository contains the code that I developed for creating a LED moonboard controller. The project is applied on a STM32 microcontroller and it work together with other repositories that I developed. These are:
 
-- [Android app](https://github.com/AlessandroAvi/Moonboard_Android_App) that can be used to filter the moonboard problems (dataset created from this repo), visualize them on the screen and later send the most relevant information via bluetooth to the STM32 microcontroller
+- [Android app](https://github.com/AlessandroAvi/Moonboard_Android_App) that can be used to filter the moonboard problems, visualize them on the screen and later send the most relevant information via bluetooth to the STM32 microcontroller
 - [Python code](https://github.com/AlessandroAvi/Moonboard_Dataset) that I developed for generating the moonboard boulder problems dataset. This uses some computer vision and automatic scrolling throught the problems (on an android simulator installed on the pc) in order to create a json that contains all the info of the boulder problems (because the original dataset is private)
 
  ![name-of-you-image](https://github.com/AlessandroAvi/Moonboard_LED_DIY/blob/main/Img/Intro.png) 
 
 # BOM
 
-The necessary hardware for this part of the prohject applied on the STM32 microcontroller is:
+The necessary hardware for the STM32 LED controller is:
 
 - Microcontroller STM32 F401RE: [Amazon link](https://www.amazon.com/NUCLEO-F401RE-Nucleo-64-Development-STM32F401RE-connectivity/dp/B07JYBPWN4)
 - arduino keypad 4x4: [Amazon link](https://www.amazon.com/Matrix-Membrane-Switch-Keyboard-Arduino/dp/B07THCLGCZ/ref=sr_1_3?dchild=1&keywords=arduino+keypad&qid=1620202495&sr=8-3)
@@ -19,7 +19,7 @@ The necessary hardware for this part of the prohject applied on the STM32 microc
 
  ![name-of-you-image](https://github.com/AlessandroAvi/Moonboard_LED_DIY/blob/main/Img/material.png) 
 
-**IDEA**: Use the custom made app on the phone in order to filter and select the boulder problem. Once the problem has been selected the app shows an ID that will be used on the keypad in order to light the correct LED for the holds. The purpose of the LCD is just for understanding if the problem selected on the STM is correct (name and grade). Another option is to use the "bluetooth send" button i  the app, that will send all the relevant information to the STM32 via bluetooth, wich will then control the LEDs and light up the boulder problem.
+**IDEA**: Use the custom made app on the phone in order to filter and select the boulder problem. Once the problem has been selected the app displays on screen the used holds (like the original app). At this point the LED can be controlled in two ways. Either by sending via bluetooth the most relevant informations (press the bluetooth button in the app, it will take care of everything) or by using the keypad mounted on the STM case. In this last case the number to insert is the one displayed in the app next to the name. The purpose of the LCD is just for understanding if the problem selected on the STM is correct (name and grade). 
 
 # GENERAL IDEA OF  THE STM CODE
 
