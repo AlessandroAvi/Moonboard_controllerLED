@@ -7,6 +7,8 @@ This repository contains the code that I developed for creating a LED moonboard 
 
  ![name-of-you-image](https://github.com/AlessandroAvi/Moonboard_LED_DIY/blob/main/Img/Intro.png) 
 
+UPDATE: Thanks to another GitHub repo that I found ([here](https://github.com/FabianRig/ArduinoMoonBoardLED)) I found out how the MoonBoard app actually connects to a device and sends the data. With this the andoird app that I developed becomes pretty much useless and I am currently trying to connect the original app to my STM with a new bluetooth receiver that uses BLE (HM-10). The LED controller part of the code is still usable, while the code for the keypad/LED/bluetooth to my phone becomes obsolete. WORK IN PROGRESS
+
 # BOM
 
 The necessary hardware for the STM32 LED controller is:
